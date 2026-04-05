@@ -455,6 +455,32 @@ body.retro .gate-sub { color: #00ffff; }
 body.retro .gate-input { background: #0f0028; border-color: #6600cc; color: #00ffff; }
 body.retro .gate-submit { background: linear-gradient(135deg, #3300aa, #1a0060); color: #ff00ff; border-color: #8800ff; }
 
+/* ===== CHORD SEQUENCE ===== */
+.seq-section { margin-top: 20px; width: 100%; max-width: 740px; background: #1e1408; border: 1px solid #3a2a12; border-radius: 10px; padding: 14px 16px; }
+.seq-label { font-size: .62rem; color: #5a4a30; text-transform: uppercase; letter-spacing: .1em; margin-bottom: 8px; text-align: center; }
+.seq-controls { display: flex; gap: 8px; align-items: center; justify-content: center; margin-bottom: 10px; flex-wrap: wrap; }
+.seq-save-row { display: flex; gap: 8px; align-items: center; justify-content: center; margin-top: 12px; flex-wrap: wrap; }
+.seq-thumbs { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; min-height: 40px; padding: 6px 0; }
+.seq-thumbs:empty::after { content: 'Select a chord and tap "+ Add" to build a sequence.'; color: #5a4a30; font-size: .72rem; font-style: italic; }
+.seq-chord { display: flex; flex-direction: column; align-items: center; gap: 3px; position: relative; }
+.seq-chord-name { font-size: .68rem; color: #b09070; text-align: center; max-width: 80px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.seq-chord-num { font-size: .58rem; color: #5a4a30; }
+.seq-chord-actions { display: flex; gap: 3px; }
+.seq-arrow { background: #1e2808; color: #a8d060; border: 1px solid #4a7020; border-radius: 50%; width: 20px; height: 20px; font-size: .6rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background .15s; padding: 0; }
+.seq-arrow:hover { background: #2a3a10; }
+.seq-remove { background: #2a0c0c; color: #f08080; border: 1px solid #7a3030; border-radius: 50%; width: 20px; height: 20px; font-size: .65rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background .15s; padding: 0; }
+.seq-remove:hover { background: #3a1010; }
+
+body.retro .seq-section { background: #0a0020; border-color: #4400aa; }
+body.retro .seq-label { color: #8866bb; }
+body.retro .seq-thumbs:empty::after { color: #6644aa; }
+body.retro .seq-chord-name { color: #00ffff; text-shadow: 0 0 4px #00ffff; }
+body.retro .seq-chord-num { color: #8866bb; }
+body.retro .seq-arrow { background: #1a0033; color: #00ffff; border-color: #00ffff; }
+body.retro .seq-arrow:hover { background: #2a0055; }
+body.retro .seq-remove { background: #2a0020; color: #ff0044; border-color: #ff0044; }
+body.retro .seq-remove:hover { background: #3a0030; }
+
 /* ===== SAFE AREA (iPhone notch) ===== */
 body { padding-bottom: max(40px, env(safe-area-inset-bottom)); }
 
@@ -629,6 +655,29 @@ try { if (sessionStorage.getItem('mejoranaAuth') === 'true') gateUnlock(); } cat
 
 <div style="margin-top:16px;text-align:center;">
   <button class="export-btn" id="exportBtn" onclick="exportChordImage()">Export as Image</button>
+</div>
+
+<div class="seq-section" id="seqSection">
+  <div class="seq-label" id="seqSectionLabel">Chord Sequence</div>
+  <div class="seq-controls">
+    <button class="btn" id="seqAddBtn" onclick="seqAddChord()">+ Add to Sequence</button>
+    <button class="btn" onclick="seqClear()">Clear</button>
+    <button class="export-btn" id="seqExportBtn" onclick="exportSequenceImage()" style="display:none;">Export Sequence</button>
+  </div>
+  <div class="seq-thumbs" id="seqThumbs"></div>
+  <div class="seq-save-row">
+    <span class="ctrl-label" id="seqSelLabel">Sequences:</span>
+    <select id="seqSel" onchange="onSeqSelect(this.value)" style="min-width:160px;">
+      <option value="">— Saved sequences —</option>
+    </select>
+    <button class="btn" onclick="showSeqSaveInput()">+ Save</button>
+    <button class="btn-danger" id="deleteSeqBtn" onclick="deleteSeq()" style="display:none;">Delete</button>
+  </div>
+  <div class="save-name-wrap" id="seqSaveNameWrap">
+    <input class="save-name-input" type="text" id="seqSaveNameInput" placeholder="Sequence name…" maxlength="40">
+    <button class="btn-accent" onclick="confirmSaveSeq()">Save</button>
+    <button class="btn" onclick="hideSeqSaveInput()">Cancel</button>
+  </div>
 </div>
 
 <div class="retro-toggle-row">
@@ -817,45 +866,45 @@ const CHORD_TYPES = {
 //   5a(D4): 0=D  1=Eb 2=E  3=F  4=F# 5=G  6=Ab 7=A  8=Bb
 const CHORD_VOICINGS = {
   // ── MAJOR ──────────────────────────────────────────────────────────────
-  'C:major':  [[3,1,3,3,2],   [8,5,3,3,null], [0,1,3,3,null]],  // G-C-C-C-E | C-E-C-C | E-C-C-C
+  'C:major':  [[3,1,3,3,2],   [3,-1,3,3,2]],                      // G-C-C-C-E | G-X-C-C-E
   'C#:major': [[4,2,4,4,3],   [4,2,2,2,null]],                   // G#-C#-C#-C#-F | G#-C#-B-B
   'D:major':  [[2,3,0,0,0],   [2,3,5,5,0]],                      // F#-D-A-A-D | F#-D-D-D-D
   'D#:major': [[3,4,1,1,1],   [3,4,6,6,1]],                      // G-Eb-Bb-Bb-Eb | G-Eb-Eb-Eb-Eb
-  'E:major':  [[4,0,2,2,2],   [0,null,2,2,2], [4,0,7,7,2]],     // G#-B-B-B-E | E-B-B-E | G#-B-E-E-E
+  'E:major':  [[4,0,2,2,2],   [0,null,2,2,2]],                    // G#-B-B-B-E | E-B-B-E
   'F:major':  [[1,1,0,0,3],   [1,6,3,3,3]],                      // F-C-A-A-F | F-F-C-C-F
   'F#:major': [[2,2,1,1,-1],  [2,7,4,4,4]],                      // F#-C#-Bb-Bb-X | F#-F#-C#-C#-F#
   'G:major':  [[3,0,2,2,0],   [3,0,5,5,5]],                      // G-B-B-B-D | G-B-D-D-G
   'G#:major': [[4,4,3,3,-1],  [4,1,4,4,null]],                   // G#-D#-C-C-X | G#-C-C#-C#
   'A:major':  [[0,2,0,0,2],   [5,2,0,0,null], [5,2,4,4,null]],  // E-C#-A-A-E | A-C#-A-A | A-C#-C#-C#
-  'A#:major': [[6,3,1,1,3],   [1,3,1,1,null]],                   // Bb-D-Bb-Bb-F | F-D-Bb-Bb
-  'B:major':  [[2,0,2,2,1],   [7,4,2,2,4]],                      // F#-B-B-B-Eb | B-D#-B-B-F#
+  'A#:major': [[1,3,1,1,null]],                                   // F-D-Bb-Bb
+  'B:major':  [[2,0,2,2,1]],                                      // F#-B-B-B-Eb
 
   // ── MINOR ──────────────────────────────────────────────────────────────
-  'C:minor':  [[3,1,3,3,1],   [8,4,3,3,null]],                   // G-C-C-C-Eb | C-Eb-C-C
+  'C:minor':  [[3,1,3,3,1]],                                      // G-C-C-C-Eb
   'C#:minor': [[4,2,4,4,2],   [0,2,4,4,null]],                   // G#-C#-C#-C#-E | E-C#-C#-C#
   'D:minor':  [[1,3,0,0,0],   [6,3,0,0,0]],                      // F-D-A-A-D | Bb-D-A-A-D
-  'D#:minor': [[2,-1,1,1,1],  [2,4,6,6,null]],                   // F#-X-Bb-Bb-Eb | F#-Eb-Eb-Eb
+  'D#:minor': [[2,-1,1,1,1]],                                     // F#-X-Bb-Bb-Eb
   'E:minor':  [[3,0,2,2,2],   [0,0,2,2,5],   [0,0,7,7,5]],      // G-B-B-B-E | E-B-B-B-G | E-B-E-E-G
-  'F:minor':  [[4,-1,3,3,3],  [4,1,8,8,null]],                   // Ab-X-C-C-F | Ab-C-F-F
+  'F:minor':  [[4,-1,3,3,3]],                                     // Ab-X-C-C-F
   'F#:minor': [[2,2,0,0,-1],  [2,2,4,4,null]],                   // F#-C#-A-A-X | F#-C#-C#-C#
-  'G:minor':  [[3,3,1,1,0],   [3,6,1,1,0]],                      // G-D-Bb-Bb-D | G-F-Bb-Bb-D
-  'G#:minor': [[4,4,2,2,-1],  [4,2,6,6,null]],                   // G#-D#-B-B-X | G#-C#-Eb-Eb
+  'G:minor':  [[3,3,1,1,0]],                                      // G-D-Bb-Bb-D
+  'G#:minor': [[4,4,2,2,-1]],                                     // G#-D#-B-B-X
   'A:minor':  [[0,1,0,0,2],   [5,1,0,0,null],[0,1,3,3,null]],   // E-C-A-A-E | A-C-A-A | E-C-C-C
-  'A#:minor': [[1,2,1,1,-1],  [6,2,1,1,3]],                      // F-C#-Bb-Bb-X | Bb-C#-Bb-Bb-F
+  'A#:minor': [[1,2,1,1,-1]],                                     // F-C#-Bb-Bb-X
   'B:minor':  [[0,0,5,5,4],   [7,3,2,2,4]],                      // E-B-D-D-F# | B-D-B-B-F#
 
   // ── DOMINANT 7th ───────────────────────────────────────────────────────
-  'C:dom7':   [[3,1,1,1,2],   [8,4,3,3,null]],                   // G-C-Bb-Bb-E | C-Eb-C-C
-  'C#:dom7':  [[4,0,4,4,3],   [1,2,4,4,6],   [4,2,2,2,null]],    // G#-B-C#-C#-F | F-C#-C#-C#-Ab | G#-C#-B-B
-  'D:dom7':   [[2,1,0,0,0],   [7,1,0,0,0]],                      // F#-C-A-A-D | B-C-A-A-D
-  'D#:dom7':  [[3,2,1,1,1],   [3,2,6,6,1]],                      // G-C#-Bb-Bb-Eb | G-C#-Eb-Eb-Eb
+  'C:dom7':   [[3,1,1,1,2]],                                      // G-C-Bb-Bb-E
+  'C#:dom7':  [[4,0,4,4,3],   [4,2,2,2,null]],                    // G#-B-C#-C#-F | G#-C#-B-B
+  'D:dom7':   [[2,1,0,0,0]],                                      // F#-C-A-A-D
+  'D#:dom7':  [[3,2,1,1,1]],                                      // G-C#-Bb-Bb-Eb
   'E:dom7':   [[4,3,2,2,2],   [4,0,2,2,0],   [0,3,2,2,2]],       // G#-D-B-B-E | G#-B-B-B-D | E-D-B-B-E
   'F:dom7':   [[1,1,0,0,1],   [6,4,3,3,null]],                   // F-C-A-A-Eb | Bb-Eb-C-C
   'F#:dom7':  [[2,2,1,1,2],   [0,2,1,1,4],   [2,3,4,4,null]],    // F#-C#-Bb-Bb-E | E-C#-Bb-Bb-F# | F#-D-C#-C#
   'G:dom7':   [[3,3,2,2,3],   [3,0,3,3,5]],                      // G-D-B-B-F | G-B-C-C-G
-  'G#:dom7':  [[4,4,3,3,4],   [4,1,4,4,null]],                   // G#-Eb-C-C-Gb | G#-C-C#-C#
+  'G#:dom7':  [[4,4,3,3,4]],                                      // G#-Eb-C-C-Gb
   'A:dom7':   [[3,2,0,0,2],   [3,2,0,0,0],   [0,2,3,3,null]],    // G-C#-A-A-E | G-C#-A-A-D | E-C#-C-C
-  'A#:dom7':  [[4,3,1,1,3],   [6,3,1,1,null]],                   // Ab-D-Bb-Bb-F | Bb-D-Bb-Bb
+  'A#:dom7':  [[4,3,1,1,3]],                                      // Ab-D-Bb-Bb-F
   'B:dom7':   [[2,0,0,0,1],   [2,4,0,0,null]],                   // F#-B-A-A-Eb | F#-D#-A-A
 
   // ── MAJOR 7th ──────────────────────────────────────────────────────────
@@ -1736,6 +1785,161 @@ function deleteCustomChord() {
   document.getElementById('deleteCustomBtn').style.display = 'none';
 }
 
+// ── CHORD SEQUENCES ───────────────────────────────────────────────────────
+const SEQ_STORAGE_KEY = 'mejorana_chord_sequences';
+let currentSequence = [];
+
+function seqAddChord() {
+  const name = document.getElementById('chordName').textContent;
+  if (!name || name === '—') return;
+  currentSequence.push({ name, positions: [...state.positions] });
+  renderSequence();
+}
+
+function seqRemoveChord(index) {
+  currentSequence.splice(index, 1);
+  renderSequence();
+}
+
+function seqMoveChord(index, dir) {
+  const target = index + dir;
+  if (target < 0 || target >= currentSequence.length) return;
+  const tmp = currentSequence[index];
+  currentSequence[index] = currentSequence[target];
+  currentSequence[target] = tmp;
+  renderSequence();
+}
+
+function seqClear() {
+  currentSequence = [];
+  renderSequence();
+}
+
+function renderSequence() {
+  const container = document.getElementById('seqThumbs');
+  container.innerHTML = '';
+  const exportBtn = document.getElementById('seqExportBtn');
+  if (exportBtn) exportBtn.style.display = currentSequence.length > 0 ? '' : 'none';
+  const TW = 80, TH = 60;
+  currentSequence.forEach((chord, i) => {
+    const wrap = document.createElement('div');
+    wrap.className = 'seq-chord';
+
+    const num = document.createElement('div');
+    num.className = 'seq-chord-num';
+    num.textContent = (i + 1);
+    wrap.appendChild(num);
+
+    const c = document.createElement('canvas');
+    c.width = TW * 2; c.height = TH * 2;
+    c.style.width = TW + 'px'; c.style.height = TH + 'px';
+    c.className = 'voicing-thumb';
+    c.onclick = () => seqLoadChord(i);
+    drawThumb(c, chord.positions);
+    wrap.appendChild(c);
+
+    const label = document.createElement('div');
+    label.className = 'seq-chord-name';
+    label.textContent = chord.name;
+    wrap.appendChild(label);
+
+    const actions = document.createElement('div');
+    actions.className = 'seq-chord-actions';
+    const leftBtn = document.createElement('button');
+    leftBtn.className = 'seq-arrow';
+    leftBtn.innerHTML = '&larr;';
+    leftBtn.onclick = (e) => { e.stopPropagation(); seqMoveChord(i, -1); };
+    const rightBtn = document.createElement('button');
+    rightBtn.className = 'seq-arrow';
+    rightBtn.innerHTML = '&rarr;';
+    rightBtn.onclick = (e) => { e.stopPropagation(); seqMoveChord(i, 1); };
+    const removeBtn = document.createElement('button');
+    removeBtn.className = 'seq-remove';
+    removeBtn.innerHTML = '&times;';
+    removeBtn.onclick = (e) => { e.stopPropagation(); seqRemoveChord(i); };
+    actions.appendChild(leftBtn);
+    actions.appendChild(rightBtn);
+    actions.appendChild(removeBtn);
+    wrap.appendChild(actions);
+
+    container.appendChild(wrap);
+  });
+}
+
+function seqLoadChord(index) {
+  const chord = currentSequence[index];
+  if (!chord) return;
+  state.positions = [...chord.positions];
+  state.selectedRoot = null;
+  state.selectedType = null;
+  state.manualMode = true;
+  document.getElementById('chordSel').value = '';
+  updateVoicingNav();
+  render();
+}
+
+function loadSeqList() {
+  return JSON.parse(localStorage.getItem(SEQ_STORAGE_KEY) || '[]');
+}
+
+function saveSeqList(list) {
+  localStorage.setItem(SEQ_STORAGE_KEY, JSON.stringify(list));
+}
+
+function rebuildSeqDropdown() {
+  const sel = document.getElementById('seqSel');
+  while (sel.options.length > 1) sel.remove(1);
+  const list = loadSeqList();
+  list.forEach((seq, i) => {
+    sel.appendChild(new Option(seq.name + ' (' + seq.chords.length + ')', i));
+  });
+}
+
+function showSeqSaveInput() {
+  document.getElementById('seqSaveNameWrap').classList.add('visible');
+  document.getElementById('seqSaveNameInput').focus();
+}
+
+function hideSeqSaveInput() {
+  document.getElementById('seqSaveNameWrap').classList.remove('visible');
+  document.getElementById('seqSaveNameInput').value = '';
+}
+
+function confirmSaveSeq() {
+  const name = document.getElementById('seqSaveNameInput').value.trim();
+  if (!name || currentSequence.length === 0) return;
+  const list = loadSeqList();
+  list.push({ name, chords: [...currentSequence] });
+  saveSeqList(list);
+  rebuildSeqDropdown();
+  hideSeqSaveInput();
+}
+
+function onSeqSelect(value) {
+  if (value === '') {
+    document.getElementById('deleteSeqBtn').style.display = 'none';
+    return;
+  }
+  const list = loadSeqList();
+  const seq = list[parseInt(value, 10)];
+  if (!seq) return;
+  currentSequence = [...seq.chords];
+  renderSequence();
+  document.getElementById('deleteSeqBtn').style.display = '';
+}
+
+function deleteSeq() {
+  const sel = document.getElementById('seqSel');
+  const idx = parseInt(sel.value, 10);
+  if (isNaN(idx)) return;
+  const list = loadSeqList();
+  list.splice(idx, 1);
+  saveSeqList(list);
+  rebuildSeqDropdown();
+  sel.value = '';
+  document.getElementById('deleteSeqBtn').style.display = 'none';
+}
+
 function setManualMode() {
   if (!state.manualMode) {
     document.getElementById('chordSel').value = '';
@@ -2215,6 +2419,160 @@ function exportChordImage() {
   }, 'image/jpeg', 0.95);
 }
 
+// ── EXPORT SEQUENCE ───────────────────────────────────────────────────────
+function exportSequenceImage() {
+  if (currentSequence.length === 0) return;
+  const retro = state.retro;
+  const scale = 2;
+  const chordW = 120, chordH = 90;
+  const pad = { left: 20, right: 20, top: 10, bottom: 10 };
+  const thumbNeckW = chordW - pad.left - pad.right;
+  const thumbNeckH = chordH - pad.top - pad.bottom;
+  const fretW = thumbNeckW / NF;
+  const strGap = thumbNeckH / (NS - 1);
+
+  const gapX = 16;
+  const labelH = 22, numH = 16;
+  const headerH = 50, footerH = 30;
+  const cardW = chordW + gapX;
+  const maxPerRow = 8;
+  const cols = Math.min(currentSequence.length, maxPerRow);
+  const rows = Math.ceil(currentSequence.length / maxPerRow);
+  const rowH = numH + chordH + labelH + 12;
+  const totalW = cols * cardW - gapX + 40;
+  const totalH = headerH + rows * rowH + footerH;
+
+  const c = document.createElement('canvas');
+  c.width = totalW * scale;
+  c.height = totalH * scale;
+  const ctx = c.getContext('2d');
+  ctx.scale(scale, scale);
+
+  // Background
+  ctx.fillStyle = retro ? '#0a0018' : '#1a1510';
+  ctx.fillRect(0, 0, totalW, totalH);
+
+  if (retro) {
+    ctx.strokeStyle = 'rgba(20,0,50,.6)';
+    ctx.lineWidth = 0.5;
+    for (let x = 0; x < totalW; x += 20) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,totalH); ctx.stroke(); }
+    for (let y = 0; y < totalH; y += 20) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(totalW,y); ctx.stroke(); }
+  }
+
+  // Header
+  ctx.textAlign = 'center';
+  if (retro) {
+    ctx.font = 'bold 14px "Press Start 2P", monospace';
+    ctx.fillStyle = '#ff00ff';
+    ctx.shadowColor = '#ff00ff'; ctx.shadowBlur = 10;
+  } else {
+    ctx.font = 'bold 20px -apple-system, BlinkMacSystemFont, sans-serif';
+    ctx.fillStyle = '#f0e060';
+    ctx.shadowColor = 'rgba(240,224,96,.25)'; ctx.shadowBlur = 12;
+  }
+  // Use saved sequence name if loaded, otherwise generic
+  const seqSel = document.getElementById('seqSel');
+  const seqTitle = (seqSel.value !== '' && seqSel.selectedOptions[0])
+    ? seqSel.selectedOptions[0].text.replace(/\s*\(\d+\)$/, '')
+    : 'Chord Sequence';
+  ctx.fillText(seqTitle, totalW / 2, 32);
+  ctx.shadowBlur = 0;
+
+  // Draw each chord
+  currentSequence.forEach((chord, i) => {
+    const row = Math.floor(i / maxPerRow);
+    const col = i % maxPerRow;
+    const rowChords = Math.min(currentSequence.length - row * maxPerRow, maxPerRow);
+    const rowW = rowChords * cardW - gapX;
+    const rowOffX = (totalW - rowW) / 2;
+    const bx = rowOffX + col * cardW;
+    const by = headerH + row * rowH;
+
+    // Number
+    ctx.textAlign = 'center';
+    ctx.font = retro ? '7px "Press Start 2P", monospace' : '10px -apple-system, sans-serif';
+    ctx.fillStyle = retro ? '#8866bb' : '#5a4a30';
+    ctx.fillText((i + 1), bx + chordW / 2, by + numH - 3);
+
+    // Thumb background
+    const tx = bx, ty = by + numH;
+    ctx.fillStyle = retro ? '#0a0015' : '#1a1206';
+    ctx.fillRect(tx, ty, chordW, chordH);
+    ctx.strokeStyle = retro ? '#4400aa' : '#3a2a10';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(tx, ty, chordW, chordH);
+
+    // Neck
+    const nx = tx + pad.left, ny = ty + pad.top;
+    ctx.fillStyle = retro ? '#110022' : '#2a1e0e';
+    ctx.fillRect(nx, ny, thumbNeckW, thumbNeckH);
+
+    // Nut
+    ctx.fillStyle = retro ? '#ff00ff' : '#d4c49a';
+    ctx.fillRect(nx - 3, ny, 3, thumbNeckH);
+
+    // Frets
+    ctx.strokeStyle = retro ? '#00ffff33' : '#5a4a2a';
+    ctx.lineWidth = 1;
+    for (let f = 1; f <= NF; f++) {
+      const fx = nx + f * fretW;
+      ctx.beginPath(); ctx.moveTo(fx, ny); ctx.lineTo(fx, ny + thumbNeckH); ctx.stroke();
+    }
+
+    // Strings
+    const strColors = ['#ff69b4','#ff8c00','#00ff41','#00ffff','#bf5fff'];
+    for (let s = 0; s < NS; s++) {
+      const sy = ny + s * strGap;
+      ctx.strokeStyle = retro ? strColors[s] : '#8a7a5a';
+      ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(nx, sy); ctx.lineTo(nx + thumbNeckW, sy); ctx.stroke();
+    }
+
+    // Dots
+    const dotR = 7;
+    chord.positions.forEach((p, s) => {
+      const sy = ny + s * strGap;
+      if (p === null || p === 0) {
+        ctx.strokeStyle = retro ? '#00ffff' : '#a8d060';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.arc(nx - 10, sy, dotR * 0.6, 0, Math.PI * 2); ctx.stroke();
+      } else if (p === -1) {
+        ctx.strokeStyle = retro ? '#ff004488' : '#5a4a3a';
+        ctx.lineWidth = 1.5;
+        const cx = nx - 10, sz = dotR * 0.5;
+        ctx.beginPath(); ctx.moveTo(cx - sz, sy - sz); ctx.lineTo(cx + sz, sy + sz); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(cx + sz, sy - sz); ctx.lineTo(cx - sz, sy + sz); ctx.stroke();
+      } else {
+        const dx = nx + (p - 0.5) * fretW;
+        ctx.fillStyle = retro ? '#ff00ff' : '#f0e060';
+        ctx.beginPath(); ctx.arc(dx, sy, dotR, 0, Math.PI * 2); ctx.fill();
+      }
+    });
+
+    // Chord name
+    ctx.textAlign = 'center';
+    ctx.font = retro ? '8px "Press Start 2P", monospace' : 'bold 12px -apple-system, sans-serif';
+    ctx.fillStyle = retro ? '#00ffff' : '#b09070';
+    ctx.fillText(chord.name, bx + chordW / 2, ty + chordH + labelH - 6);
+  });
+
+  // Footer
+  ctx.textAlign = 'center';
+  ctx.font = retro ? '6px "Press Start 2P", monospace' : '9px -apple-system, sans-serif';
+  ctx.fillStyle = retro ? '#4422aa' : '#4a3a22';
+  ctx.fillText('Mejorana Chord Visualizer', totalW / 2, totalH - 10);
+
+  c.toBlob(blob => {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const fname = seqTitle.replace(/[^a-zA-Z0-9]/g, '_') || 'sequence';
+    a.href = url;
+    a.download = `mejorana_${fname}.jpg`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }, 'image/jpeg', 0.95);
+}
+
 // ── TUNER ──────────────────────────────────────────────────────────────────
 const TUNER_STRINGS = [
   { label: '1a — Mi (E4)',  freq: 329.63 },
@@ -2413,6 +2771,7 @@ function tunerLoop() {
 // ── INIT ───────────────────────────────────────────────────────────────────
 buildDropdown();
 rebuildCustomDropdown();
+rebuildSeqDropdown();
 buildFretboard();
 render();
 applyI18n();
