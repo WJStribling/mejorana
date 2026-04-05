@@ -8,6 +8,9 @@
 <meta name="apple-mobile-web-app-title" content="Mejorana">
 <meta name="theme-color" content="#1a1510">
 <title>Mejorana</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -348,7 +351,8 @@ body.retro .open-cell:hover { background: rgba(100,0,255,.15); }
 body.retro {
   background: #0a0018;
   color: #e0e0ff;
-  font-family: 'Courier New', Courier, monospace;
+  font-family: 'Press Start 2P', 'Courier New', monospace;
+  font-size: .75rem;
 }
 body.retro::before {
   content: ''; position: fixed; inset: 0; z-index: -1; pointer-events: none;
@@ -365,19 +369,20 @@ body.retro::before {
 }
 body.retro h1 {
   color: #ff00ff; text-shadow: 0 0 10px #ff00ff, 0 0 30px #ff00ff, 0 0 60px #aa00aa;
-  font-family: 'Courier New', Courier, monospace;
+  font-family: 'Press Start 2P', 'Courier New', monospace;
+  font-size: 1.3rem; line-height: 1.4;
 }
 body.retro .subtitle { color: #00ffff; text-shadow: 0 0 8px #00ffff; }
 body.retro .pill-toggle { background: #0f0028; border-color: #6600cc; }
-body.retro .pill-toggle button { color: #8866bb; }
+body.retro .pill-toggle button { color: #8866bb; font-size: .55rem; }
 body.retro .pill-toggle button.active { background: #3300aa; color: #ff00ff; text-shadow: 0 0 6px #ff00ff; }
 body.retro select {
   background: #0f0028; border-color: #6600cc; color: #00ffff;
-  text-shadow: 0 0 4px #00ffff;
+  text-shadow: 0 0 4px #00ffff; font-family: 'Press Start 2P', monospace; font-size: .6rem;
 }
 body.retro .btn, body.retro .play-chord-btn, body.retro .btn-accent, body.retro .btn-danger {
   background: #1a0040; border-color: #8800ff; color: #00ffff;
-  text-shadow: 0 0 4px #00ffff;
+  text-shadow: 0 0 4px #00ffff; font-family: 'Press Start 2P', monospace; font-size: .55rem;
 }
 body.retro .btn:hover, body.retro .play-chord-btn:hover { background: #2a0060; }
 body.retro .alt-voicing-btn {
@@ -396,23 +401,23 @@ body.retro .toggle-thumb { background: #d0d0ff; }
 body.retro .toggle-text { color: #8866bb; }
 body.retro .toggle-wrap.on .toggle-text { color: #00ff55; text-shadow: 0 0 4px #00ff55; }
 body.retro .open-col { background: #0a0020; border-color: #4400aa; }
-body.retro .label-note { color: #00ffff; text-shadow: 0 0 4px #00ffff; }
+body.retro .label-note { color: #00ffff; text-shadow: 0 0 4px #00ffff; font-family: 'Press Start 2P', monospace; font-size: .55rem; }
 body.retro .label-desc { color: #6644aa; }
 body.retro .course-badge { background: #0a0020; color: #aa88dd; border-color: #6600cc; }
 body.retro .fret-num { color: #6644aa; }
 body.retro .chord-display-label { color: #8866bb; }
-body.retro .chord-name { color: #ff00ff; text-shadow: 0 0 12px #ff00ff, 0 0 40px #aa00aa; }
+body.retro .chord-name { color: #ff00ff; text-shadow: 0 0 12px #ff00ff, 0 0 40px #aa00aa; font-family: 'Press Start 2P', monospace; font-size: 1.6rem; }
 body.retro .chord-notes { color: #00ffff; text-shadow: 0 0 4px #00ffff; }
 body.retro .torrente-label { color: #8866bb; }
 body.retro .torrente-chord { background: #0a0020; border-color: #4400aa; }
 body.retro .torrente-chord:hover { background: #1a0040; border-color: #8800ff; }
 body.retro .torrente-chord.tonic { border-color: #ff00ff; box-shadow: 0 0 8px rgba(255,0,255,.3); }
 body.retro .torrente-role { color: #8866bb; }
-body.retro .torrente-name { color: #00ffff; text-shadow: 0 0 6px #00ffff; }
+body.retro .torrente-name { color: #00ffff; text-shadow: 0 0 6px #00ffff; font-family: 'Press Start 2P', monospace; font-size: .85rem; }
 body.retro .torrente-chord.tonic .torrente-name { color: #ff00ff; text-shadow: 0 0 8px #ff00ff; }
 body.retro .prompt-area { background: #0a0020; border-color: #4400aa; }
 body.retro .prompt-area-label { color: #8866bb; }
-body.retro .prompt-text { color: #00ff88; text-shadow: 0 0 3px #00ff88; }
+body.retro .prompt-text { color: #00ff88; text-shadow: 0 0 3px #00ff88; font-family: 'Press Start 2P', monospace; font-size: .55rem; line-height: 2; }
 body.retro .copy-btn { background: #1a0040; border-color: #6600cc; color: #00ffff; }
 body.retro .custom-row select { background: #0f0028; border-color: #6600cc; color: #00ffff; }
 body.retro .save-name-input { background: #0f0028; border-color: #6600cc; color: #00ffff; }
