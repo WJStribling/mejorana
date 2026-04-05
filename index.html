@@ -1306,7 +1306,8 @@ function updateInfo(activePcs) {
     return;
   }
 
-  const detected = detectChord(activePcs);
+  const allOpen = state.positions.every(p => p === 0);
+  const detected = allOpen ? 'Open' : detectChord(activePcs);
   nameEl.textContent = detected || '—';
 
   const uNames = [...new Set(activePcs.map(p => pcName(p)))];
