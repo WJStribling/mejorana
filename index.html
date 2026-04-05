@@ -114,6 +114,12 @@ select:focus { outline: 2px solid #c8a060; outline-offset: 1px; }
 }
 .neck.main-mode { border-left: none; }
 .neck.pov-mode { border-right: none; }
+body.retro .neck {
+  background: #080020;
+  border-color: #4400aa;
+  box-shadow: inset 0 0 30px rgba(100,0,255,.15);
+}
+body.retro .open-cell:hover { background: rgba(100,0,255,.15); }
 
 .labels-col {
   display: flex; flex-direction: column; padding-left: 14px; justify-content: space-around;
@@ -334,6 +340,94 @@ select:focus { outline: 2px solid #c8a060; outline-offset: 1px; }
   text-transform: uppercase; margin-top: 12px; min-height: 18px;
 }
 
+/* ===== RETRO MODE ===== */
+.retro-toggle-row {
+  margin-top: 28px; text-align: center;
+}
+
+body.retro {
+  background: #0a0018;
+  color: #e0e0ff;
+  font-family: 'Courier New', Courier, monospace;
+}
+body.retro::before {
+  content: ''; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+  background:
+    linear-gradient(rgba(20,0,50,.92) 2px, transparent 2px),
+    linear-gradient(90deg, rgba(20,0,50,.92) 2px, transparent 2px);
+  background-size: 40px 40px;
+  background-position: center center;
+  animation: retro-grid-scroll 4s linear infinite;
+}
+@keyframes retro-grid-scroll {
+  0% { background-position: 0 0; }
+  100% { background-position: 0 40px; }
+}
+body.retro h1 {
+  color: #ff00ff; text-shadow: 0 0 10px #ff00ff, 0 0 30px #ff00ff, 0 0 60px #aa00aa;
+  font-family: 'Courier New', Courier, monospace;
+}
+body.retro .subtitle { color: #00ffff; text-shadow: 0 0 8px #00ffff; }
+body.retro .pill-toggle { background: #0f0028; border-color: #6600cc; }
+body.retro .pill-toggle button { color: #8866bb; }
+body.retro .pill-toggle button.active { background: #3300aa; color: #ff00ff; text-shadow: 0 0 6px #ff00ff; }
+body.retro select {
+  background: #0f0028; border-color: #6600cc; color: #00ffff;
+  text-shadow: 0 0 4px #00ffff;
+}
+body.retro .btn, body.retro .play-chord-btn, body.retro .btn-accent, body.retro .btn-danger {
+  background: #1a0040; border-color: #8800ff; color: #00ffff;
+  text-shadow: 0 0 4px #00ffff;
+}
+body.retro .btn:hover, body.retro .play-chord-btn:hover { background: #2a0060; }
+body.retro .alt-voicing-btn {
+  background: #001a00; border-color: #00ff00; color: #00ff00;
+  text-shadow: 0 0 6px #00ff00;
+}
+body.retro .pov-toggle { background: #0f0028; border-color: #6600cc; }
+body.retro .pov-toggle .pov-toggle-label { color: #aa88dd; }
+body.retro .pov-toggle.active { background: #3300aa; border-color: #ff00ff; }
+body.retro .pov-toggle.active .pov-toggle-label { color: #ff00ff; text-shadow: 0 0 6px #ff00ff; }
+body.retro .mode-hint { color: #4422aa; }
+body.retro .ctrl-label { color: #8866bb; }
+body.retro .toggle-track { background: #1a0040; border-color: #6600cc; }
+body.retro .toggle-switch input:checked ~ .toggle-track { background: #00cc44; border-color: #00ff55; box-shadow: 0 0 8px #00ff55; }
+body.retro .toggle-thumb { background: #d0d0ff; }
+body.retro .toggle-text { color: #8866bb; }
+body.retro .toggle-wrap.on .toggle-text { color: #00ff55; text-shadow: 0 0 4px #00ff55; }
+body.retro .open-col { background: #0a0020; border-color: #4400aa; }
+body.retro .label-note { color: #00ffff; text-shadow: 0 0 4px #00ffff; }
+body.retro .label-desc { color: #6644aa; }
+body.retro .course-badge { background: #0a0020; color: #aa88dd; border-color: #6600cc; }
+body.retro .fret-num { color: #6644aa; }
+body.retro .chord-display-label { color: #8866bb; }
+body.retro .chord-name { color: #ff00ff; text-shadow: 0 0 12px #ff00ff, 0 0 40px #aa00aa; }
+body.retro .chord-notes { color: #00ffff; text-shadow: 0 0 4px #00ffff; }
+body.retro .torrente-label { color: #8866bb; }
+body.retro .torrente-chord { background: #0a0020; border-color: #4400aa; }
+body.retro .torrente-chord:hover { background: #1a0040; border-color: #8800ff; }
+body.retro .torrente-chord.tonic { border-color: #ff00ff; box-shadow: 0 0 8px rgba(255,0,255,.3); }
+body.retro .torrente-role { color: #8866bb; }
+body.retro .torrente-name { color: #00ffff; text-shadow: 0 0 6px #00ffff; }
+body.retro .torrente-chord.tonic .torrente-name { color: #ff00ff; text-shadow: 0 0 8px #ff00ff; }
+body.retro .prompt-area { background: #0a0020; border-color: #4400aa; }
+body.retro .prompt-area-label { color: #8866bb; }
+body.retro .prompt-text { color: #00ff88; text-shadow: 0 0 3px #00ff88; }
+body.retro .copy-btn { background: #1a0040; border-color: #6600cc; color: #00ffff; }
+body.retro .custom-row select { background: #0f0028; border-color: #6600cc; color: #00ffff; }
+body.retro .save-name-input { background: #0f0028; border-color: #6600cc; color: #00ffff; }
+body.retro .listen-row { border-color: #2a0060; }
+body.retro .tuner-panel { background: #0a0020; border-color: #4400aa; }
+body.retro .tuner-note { color: #ff00ff; text-shadow: 0 0 12px #ff00ff; }
+body.retro .tuner-cents-label { color: #00ffff; }
+body.retro .tuner-mic-btn { background: #1a0040; border-color: #6600cc; color: #00ffff; }
+body.retro .fretboard-scroll::-webkit-scrollbar-thumb { background: #6600cc; }
+body.retro #gate-overlay { background: #0a0018; }
+body.retro .gate-title { color: #ff00ff; text-shadow: 0 0 20px #ff00ff; }
+body.retro .gate-sub { color: #00ffff; }
+body.retro .gate-input { background: #0f0028; border-color: #6600cc; color: #00ffff; }
+body.retro .gate-submit { background: linear-gradient(135deg, #3300aa, #1a0060); color: #ff00ff; border-color: #8800ff; }
+
 /* ===== SAFE AREA (iPhone notch) ===== */
 body { padding-bottom: max(40px, env(safe-area-inset-bottom)); }
 
@@ -497,6 +591,16 @@ try { if (sessionStorage.getItem('mejoranaAuth') === 'true') gateUnlock(); } cat
   <div class="prompt-area-label" id="chordDescLabel">Chord Description</div>
   <div class="prompt-text" id="promptOut">Select a chord or click frets to build one.</div>
   <button class="btn copy-btn" id="copyBtnEl" onclick="copyPrompt()">Copy</button>
+</div>
+
+<div class="retro-toggle-row">
+  <label class="toggle-wrap" id="retroWrap">
+    <div class="toggle-switch">
+      <input type="checkbox" id="retroCheck" onchange="toggleRetro()">
+      <div class="toggle-track"><div class="toggle-thumb"></div></div>
+    </div>
+    <span class="toggle-text" id="retroText">Retro Mode</span>
+  </label>
 </div>
 
 <script>
@@ -759,6 +863,7 @@ const state = {
   listen: false,
   courseLinked: true,
   showNoteLabels: false,
+  retro: false,
 };
 
 // ── CHORD FINGERING ────────────────────────────────────────────────────────
@@ -885,25 +990,40 @@ function buildFretboard() {
   const neckH = NS * CH;
   const vOrder = pov ? [4,3,2,1,0] : [0,1,2,3,4];
 
+  const retro = state.retro;
+
   // Nut — slightly thicker ivory-coloured bar
+  const nutBg = retro
+    ? 'linear-gradient(180deg,#ff00ff,#aa00ff,#ff00ff)'
+    : 'linear-gradient(180deg,#f8f0d8,#e8e0b8,#f8f0d8)';
+  const nutShadow = retro ? 'box-shadow:0 0 8px #ff00ff,0 0 16px #aa00aa;' : '';
   const nut = `<div style="position:absolute;${pov?'right':'left'}:0;top:0;bottom:0;width:6px;
-    background:linear-gradient(180deg,#f8f0d8,#e8e0b8,#f8f0d8);z-index:4;pointer-events:none;border-radius:1px;"></div>`;
+    background:${nutBg};${nutShadow}z-index:4;pointer-events:none;border-radius:1px;"></div>`;
 
   // Fret lines — proportional positions, slightly tapered thickness
   let fretLines = '';
   for (let f = 1; f <= NF; f++) {
     const xp = pov ? NECK_W - FRET_X[f] : FRET_X[f];
     const tw = Math.max(1.4, 3.2 - f * 0.2);
+    const fretBg = retro
+      ? 'linear-gradient(180deg,rgba(0,255,255,.3),rgba(0,255,255,.6),rgba(0,255,255,.3))'
+      : 'linear-gradient(180deg,#c8b88880,#ddd0a8,#c8b88880)';
+    const fretGlow = retro ? 'box-shadow:0 0 4px #00ffff;' : '';
     fretLines += `<div style="position:absolute;left:${xp - tw/2}px;top:0;bottom:0;width:${tw}px;
-      background:linear-gradient(180deg,#c8b88880,#ddd0a8,#c8b88880);z-index:2;pointer-events:none;"></div>`;
+      background:${fretBg};${fretGlow}z-index:2;pointer-events:none;"></div>`;
   }
 
   // String lines — running the full neck width
   let strLines = '';
+  const strColors = ['#ff0066','#ffaa00','#00ff44','#00ccff','#aa44ff'];
   vOrder.forEach((si, row) => {
     const y = (row + 0.5) * CH - THICK[si] / 2;
-    strLines += `<div style="position:absolute;left:0;right:0;top:${y}px;height:${THICK[si]}px;
-      background:linear-gradient(90deg,#a09878,#e0d8b8,#a09878);opacity:.85;z-index:2;pointer-events:none;"></div>`;
+    const strBg = retro
+      ? `${strColors[si]}`
+      : 'linear-gradient(90deg,#a09878,#e0d8b8,#a09878)';
+    const strGlow = retro ? `box-shadow:0 0 6px ${strColors[si]},0 0 12px ${strColors[si]}40;` : '';
+    strLines += `<div style="position:absolute;left:0;right:0;top:${y}px;height:${retro?2:THICK[si]}px;
+      background:${strBg};opacity:${retro?1:.85};${strGlow}z-index:2;pointer-events:none;"></div>`;
   });
 
   // Position markers at 3, 5, 7
@@ -911,8 +1031,10 @@ function buildFretboard() {
   [3, 5, 7].forEach(f => {
     const cx = (FRET_X[f-1] + FRET_X[f]) / 2;
     const mx = pov ? NECK_W - cx - 9 : cx - 9;
+    const mkBg = retro ? 'rgba(0,255,255,.15)' : 'rgba(255,248,200,.12)';
+    const mkShadow = retro ? 'box-shadow:0 0 6px rgba(0,255,255,.2);' : '';
     markers += `<div style="position:absolute;left:${mx}px;top:${neckH/2-9}px;width:18px;height:18px;
-      border-radius:50%;background:rgba(255,248,200,.12);z-index:1;pointer-events:none;"></div>`;
+      border-radius:50%;background:${mkBg};${mkShadow}z-index:1;pointer-events:none;"></div>`;
   });
 
   // Clickable fret cells — proportional widths
@@ -1040,39 +1162,59 @@ function render() {
 
     if (pos === -1) {
       const oc = document.getElementById(`oc_${s}`);
-      if (oc) oc.innerHTML = `<span style="color:#cc4444;font-size:17px;font-weight:900;line-height:1;">✕</span>`;
+      const xColor = state.retro ? '#ff0044' : '#cc4444';
+      const xGlow = state.retro ? 'text-shadow:0 0 8px #ff0044;' : '';
+      if (oc) oc.innerHTML = `<span style="color:${xColor};font-size:17px;font-weight:900;line-height:1;${xGlow}">✕</span>`;
       continue;
     }
 
     const p = fretPc(s, pos);
     activePcs.push(p);
     const isRoot = state.selectedRoot !== null && p === state.selectedRoot;
+    const retro = state.retro;
 
     if (pos === 0) {
       const oc = document.getElementById(`oc_${s}`);
+      const openBorder = retro
+        ? (isRoot ? '#ff00ff' : '#00ffff')
+        : (isRoot ? '#f0e060' : '#d0c8a0');
+      const openBg = retro
+        ? (isRoot ? 'rgba(255,0,255,.2)' : 'transparent')
+        : (isRoot ? 'rgba(240,224,96,.18)' : 'transparent');
+      const openShadow = retro
+        ? `box-shadow:0 0 8px ${isRoot?'#ff00ff':'#00ffff'},0 0 16px ${isRoot?'#ff00ff40':'#00ffff40'};`
+        : 'box-shadow:0 1px 4px rgba(0,0,0,.5);';
+      const noteLblColor = retro
+        ? (isRoot ? '#ff00ff' : '#00ffff')
+        : (isRoot ? '#c8a000' : '#706040');
       const noteLabel = state.showNoteLabels
         ? `<span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
-            font-size:9px;font-weight:800;color:${isRoot ? '#c8a000' : '#706040'};
+            font-size:9px;font-weight:800;color:${noteLblColor};${retro?'text-shadow:0 0 4px '+noteLblColor+';':''}
             pointer-events:none;line-height:1;">${noteName(fretPc(s, 0))}</span>` : '';
       if (oc) oc.innerHTML = `<div style="position:relative;width:22px;height:22px;border-radius:50%;
-        border:2px solid ${isRoot ? '#f0e060' : '#d0c8a0'};
-        background:${isRoot ? 'rgba(240,224,96,.18)' : 'transparent'};
-        box-shadow:0 1px 4px rgba(0,0,0,.5);">${noteLabel}</div>`;
+        border:2px solid ${openBorder};background:${openBg};${openShadow}">${noteLabel}</div>`;
     } else {
       const vRow = vOrder.indexOf(s);
       const cx = fretCenterX(pos, pov);
       const dot = document.createElement('div');
       dot.style.cssText = `position:absolute;left:${cx - DS/2}px;top:${(vRow+0.5)*CH - DS/2}px;
         width:${DS}px;height:${DS}px;border-radius:50%;display:flex;align-items:center;justify-content:center;`;
-      dot.style.cssText += isRoot
-        ? `background:radial-gradient(circle at 35% 30%,#fff8a0,#e8c000,#b09000);
-           border:2px solid #7a6000;box-shadow:0 2px 8px rgba(0,0,0,.6),0 0 10px rgba(200,160,0,.4);`
-        : `background:radial-gradient(circle at 35% 30%,#f0e8a0,#c8a040,#9a7820);
-           border:2px solid #6a5010;box-shadow:0 2px 5px rgba(0,0,0,.5);`;
+      if (retro) {
+        const nc = isRoot ? '#ff00ff' : '#00ffff';
+        dot.style.cssText += `background:${nc};border:2px solid ${nc};
+          box-shadow:0 0 10px ${nc},0 0 20px ${nc},0 0 40px ${nc}40;`;
+      } else {
+        dot.style.cssText += isRoot
+          ? `background:radial-gradient(circle at 35% 30%,#fff8a0,#e8c000,#b09000);
+             border:2px solid #7a6000;box-shadow:0 2px 8px rgba(0,0,0,.6),0 0 10px rgba(200,160,0,.4);`
+          : `background:radial-gradient(circle at 35% 30%,#f0e8a0,#c8a040,#9a7820);
+             border:2px solid #6a5010;box-shadow:0 2px 5px rgba(0,0,0,.5);`;
+      }
       if (state.showNoteLabels) {
         const lbl = document.createElement('span');
         lbl.textContent = noteName(p);
-        lbl.style.cssText = `font-size:9px;font-weight:800;color:rgba(0,0,0,.7);pointer-events:none;line-height:1;`;
+        const lblColor = retro ? '#0a0018' : 'rgba(0,0,0,.7)';
+        lbl.style.cssText = `font-size:9px;font-weight:800;color:${lblColor};pointer-events:none;line-height:1;`;
         dot.appendChild(lbl);
       }
       dotsEl.appendChild(dot);
@@ -1089,12 +1231,16 @@ function render() {
     const isRoot = state.selectedRoot !== null && aPos > 0 &&
                    fretPc(2, aPos) === state.selectedRoot;
 
+    const retro = state.retro;
+
     if (aPos === -1) {
       // Muted course
+      const xc = retro ? '#ff0044' : '#cc4444';
+      const xg = retro ? 'text-shadow:0 0 8px #ff0044;' : '';
       const ocTop = document.getElementById(`oc_${vOrder[topRow]}`);
-      if (ocTop) ocTop.innerHTML = `<span style="color:#cc4444;font-size:17px;font-weight:900;line-height:1;">✕</span>`;
+      if (ocTop) ocTop.innerHTML = `<span style="color:${xc};font-size:17px;font-weight:900;line-height:1;${xg}">✕</span>`;
       const ocBot = document.getElementById(`oc_${vOrder[topRow+1]}`);
-      if (ocBot) ocBot.innerHTML = `<span style="color:#cc4444;font-size:17px;font-weight:900;line-height:1;">✕</span>`;
+      if (ocBot) ocBot.innerHTML = `<span style="color:${xc};font-size:17px;font-weight:900;line-height:1;${xg}">✕</span>`;
 
     } else if (aPos === 0) {
       const openColEl = document.querySelector(pov ? '.open-col.right-side' : '.open-col:not(.right-side)');
@@ -1102,11 +1248,13 @@ function render() {
         openColEl.style.position = 'relative';
         const ov = document.createElement('div');
         ov.id = 'a-course-oval';
+        const oBorder = retro ? (isRoot?'#ff00ff':'#00ffff') : (isRoot?'#f0e060':'#d0c8a0');
+        const oBg = retro ? (isRoot?'rgba(255,0,255,.2)':'transparent') : (isRoot?'rgba(240,224,96,.18)':'transparent');
+        const oShadow = retro ? `0 0 8px ${oBorder},0 0 16px ${oBorder}40` : '0 1px 4px rgba(0,0,0,.5)';
         ov.style.cssText = `position:absolute;left:50%;transform:translateX(-50%);
           top:${yTop}px;width:22px;height:${ovalH}px;border-radius:11px;
-          border:2px solid ${isRoot ? '#f0e060' : '#d0c8a0'};
-          background:${isRoot ? 'rgba(240,224,96,.18)' : 'transparent'};
-          box-shadow:0 1px 4px rgba(0,0,0,.5);pointer-events:none;z-index:10;`;
+          border:2px solid ${oBorder};background:${oBg};
+          box-shadow:${oShadow};pointer-events:none;z-index:10;`;
         openColEl.appendChild(ov);
       }
 
@@ -1116,11 +1264,17 @@ function render() {
       ov.style.cssText = `position:absolute;left:${cx - DS/2}px;top:${yTop}px;
         width:${DS}px;height:${ovalH}px;border-radius:${DS/2}px;
         display:flex;align-items:center;justify-content:center;`;
-      ov.style.cssText += isRoot
-        ? `background:radial-gradient(circle at 35% 30%,#fff8a0,#e8c000,#b09000);
-           border:2px solid #7a6000;box-shadow:0 2px 8px rgba(0,0,0,.6),0 0 10px rgba(200,160,0,.4);`
-        : `background:radial-gradient(circle at 35% 30%,#f0e8a0,#c8a040,#9a7820);
-           border:2px solid #6a5010;box-shadow:0 2px 5px rgba(0,0,0,.5);`;
+      if (retro) {
+        const nc = isRoot ? '#ff00ff' : '#00ffff';
+        ov.style.cssText += `background:${nc};border:2px solid ${nc};
+          box-shadow:0 0 10px ${nc},0 0 20px ${nc},0 0 40px ${nc}40;`;
+      } else {
+        ov.style.cssText += isRoot
+          ? `background:radial-gradient(circle at 35% 30%,#fff8a0,#e8c000,#b09000);
+             border:2px solid #7a6000;box-shadow:0 2px 8px rgba(0,0,0,.6),0 0 10px rgba(200,160,0,.4);`
+          : `background:radial-gradient(circle at 35% 30%,#f0e8a0,#c8a040,#9a7820);
+             border:2px solid #6a5010;box-shadow:0 2px 5px rgba(0,0,0,.5);`;
+      }
       if (state.showNoteLabels) {
         const lbl = document.createElement('span');
         lbl.textContent = noteName(fretPc(2, aPos));
@@ -1278,7 +1432,63 @@ function getOutBus(ctx) {
   return comp;
 }
 
+function synthNoteNow(ctx, freq, volume, startDelay) {
+  const t   = ctx.currentTime + startDelay;
+  const dur = 1.8;
+  const out = getOutBus(ctx);
+
+  // Synth envelope — punchy attack, sustained pad feel
+  const env = ctx.createGain();
+  env.gain.setValueAtTime(0, t);
+  env.gain.linearRampToValueAtTime(volume * 0.7, t + 0.005);
+  env.gain.setValueAtTime(volume * 0.7, t + 0.1);
+  env.gain.exponentialRampToValueAtTime(0.001, t + dur);
+  env.connect(out);
+
+  // Square wave — classic 8-bit lead
+  const sq = ctx.createOscillator();
+  sq.type = 'square';
+  sq.frequency.setValueAtTime(freq, t);
+  // Slight pitch slide down for retro feel
+  sq.frequency.exponentialRampToValueAtTime(freq * 0.995, t + 0.15);
+  const sqG = ctx.createGain();
+  sqG.gain.value = 0.3;
+  sq.connect(sqG); sqG.connect(env);
+  sq.start(t); sq.stop(t + dur);
+
+  // Sawtooth one octave up — shimmery top
+  const saw = ctx.createOscillator();
+  saw.type = 'sawtooth';
+  saw.frequency.value = freq * 2;
+  const sawG = ctx.createGain();
+  sawG.gain.value = 0.08;
+  saw.connect(sawG); sawG.connect(env);
+  saw.start(t); saw.stop(t + dur);
+
+  // Sub oscillator — triangle one octave below
+  const sub = ctx.createOscillator();
+  sub.type = 'triangle';
+  sub.frequency.value = freq / 2;
+  const subG = ctx.createGain();
+  subG.gain.value = 0.15;
+  sub.connect(subG); subG.connect(env);
+  sub.start(t); sub.stop(t + dur);
+
+  // Arpeggio sweep — short pitch blip
+  const arp = ctx.createOscillator();
+  arp.type = 'square';
+  arp.frequency.setValueAtTime(freq * 4, t);
+  arp.frequency.exponentialRampToValueAtTime(freq, t + 0.06);
+  const arpG = ctx.createGain();
+  arpG.gain.setValueAtTime(0.12, t);
+  arpG.gain.exponentialRampToValueAtTime(0.001, t + 0.08);
+  arp.connect(arpG); arpG.connect(env);
+  arp.start(t); arp.stop(t + 0.1);
+}
+
 function pluckNoteNow(ctx, freq, volume, startDelay) {
+  if (state.retro) return synthNoteNow(ctx, freq, volume, startDelay);
+
   const t   = ctx.currentTime + startDelay;
   const dur = 3.0;
   const out = getOutBus(ctx);
@@ -1387,6 +1597,14 @@ function toggleCourse() {
 function toggleNoteLabels() {
   state.showNoteLabels = document.getElementById('noteLabelsCheck').checked;
   document.getElementById('noteLabelsWrap').classList.toggle('on', state.showNoteLabels);
+  render();
+}
+
+function toggleRetro() {
+  state.retro = document.getElementById('retroCheck').checked;
+  document.body.classList.toggle('retro', state.retro);
+  document.getElementById('retroWrap').classList.toggle('on', state.retro);
+  buildFretboard();
   render();
 }
 
