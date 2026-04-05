@@ -139,6 +139,17 @@ body.retro .open-cell:hover { background: rgba(100,0,255,.15); }
 .fret-nums-row { display: flex; margin-top: 6px; }
 .fret-num { text-align: center; font-size: .62rem; color: #4a3a22; }
 
+/* ===== VOICING NAVIGATOR ===== */
+.voicing-nav { margin-top: 18px; text-align: center; }
+.voicing-nav-header { display: flex; align-items: center; justify-content: center; gap: 16px; margin-bottom: 10px; }
+.voicing-arrow { background: #1e2808; color: #a8d060; border: 1px solid #4a7020; border-radius: 50%; width: 36px; height: 36px; font-size: 1.1rem; cursor: pointer; transition: background .15s; display: flex; align-items: center; justify-content: center; }
+.voicing-arrow:hover { background: #2a3a10; }
+.voicing-label { font-size: .78rem; color: #7a6a50; text-transform: uppercase; letter-spacing: .08em; }
+.voicing-thumbs { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+.voicing-thumb { cursor: pointer; border: 2px solid #3a2a10; border-radius: 6px; transition: border-color .15s, transform .15s; background: #1a1206; }
+.voicing-thumb:hover { border-color: #a8d060; transform: scale(1.05); }
+.voicing-thumb.active { border-color: #f0e060; box-shadow: 0 0 10px rgba(240,224,96,.3); }
+
 /* ===== CHORD DISPLAY ===== */
 .chord-display { margin-top: 24px; text-align: center; }
 .chord-display-label { font-size: .66rem; color: #5a4a30; text-transform: uppercase; letter-spacing: .1em; margin-bottom: 6px; }
@@ -410,6 +421,12 @@ body.retro .label-note { color: #00ffff; text-shadow: 0 0 4px #00ffff; font-fami
 body.retro .label-desc { color: #6644aa; }
 body.retro .course-badge { background: #0a0020; color: #aa88dd; border-color: #6600cc; }
 body.retro .fret-num { color: #6644aa; }
+body.retro .voicing-arrow { background: #1a0033; color: #00ffff; border-color: #00ffff; box-shadow: 0 0 6px #00ffff44; }
+body.retro .voicing-arrow:hover { background: #2a0055; }
+body.retro .voicing-label { color: #8866bb; text-shadow: 0 0 4px #8866bb; }
+body.retro .voicing-thumb { border-color: #330066; background: #0a0015; }
+body.retro .voicing-thumb:hover { border-color: #00ffff; }
+body.retro .voicing-thumb.active { border-color: #ff00ff; box-shadow: 0 0 10px rgba(255,0,255,.4); }
 body.retro .chord-display-label { color: #8866bb; }
 body.retro .chord-name { color: #ff00ff; text-shadow: 0 0 12px #ff00ff, 0 0 40px #aa00aa; font-family: 'Press Start 2P', monospace; font-size: 1.6rem; }
 body.retro .chord-notes { color: #00ffff; text-shadow: 0 0 4px #00ffff; }
@@ -509,7 +526,6 @@ try { if (sessionStorage.getItem('mejoranaAuth') === 'true') gateUnlock(); } cat
     <optgroup id="grpMaj7" label="Major 7"></optgroup>
     <optgroup id="grpMin7" label="Minor 7"></optgroup>
   </select>
-  <button class="alt-voicing-btn" id="altVoicingBtn" onclick="nextVoicing()">Alt Voicing</button>
   <div class="pov-toggle" id="povBtn" onclick="togglePOV()">
     <span class="pov-toggle-label">POV</span>
   </div>
@@ -584,6 +600,15 @@ try { if (sessionStorage.getItem('mejoranaAuth') === 'true') gateUnlock(); } cat
 
 <div class="fretboard-scroll">
   <div id="fretboard-mount"></div>
+</div>
+
+<div class="voicing-nav" id="voicingNav" style="display:none;">
+  <div class="voicing-nav-header">
+    <button class="voicing-arrow" id="voicingPrev" onclick="prevVoicing()">&larr;</button>
+    <span class="voicing-label" id="voicingLabel">Voicing 1 of 3</span>
+    <button class="voicing-arrow" id="voicingNext" onclick="nextVoicing()">&rarr;</button>
+  </div>
+  <div class="voicing-thumbs" id="voicingThumbs"></div>
 </div>
 
 <div class="chord-display">
@@ -821,15 +846,15 @@ const CHORD_VOICINGS = {
 
   // ── DOMINANT 7th ───────────────────────────────────────────────────────
   'C:dom7':   [[3,1,1,1,2],   [8,4,3,3,null]],                   // G-C-Bb-Bb-E | C-Eb-C-C
-  'C#:dom7':  [[1,2,4,4,6],   [4,2,2,2,null]],                   // F-C#-C#-C#-Ab | G#-C#-B-B
+  'C#:dom7':  [[4,0,4,4,3],   [1,2,4,4,6],   [4,2,2,2,null]],    // G#-B-C#-C#-F | F-C#-C#-C#-Ab | G#-C#-B-B
   'D:dom7':   [[2,1,0,0,0],   [7,1,0,0,0]],                      // F#-C-A-A-D | B-C-A-A-D
   'D#:dom7':  [[3,2,1,1,1],   [3,2,6,6,1]],                      // G-C#-Bb-Bb-Eb | G-C#-Eb-Eb-Eb
-  'E:dom7':   [[4,0,2,2,0],   [0,3,2,2,2]],                      // G#-B-B-B-D | E-D-B-B-E
+  'E:dom7':   [[4,3,2,2,2],   [4,0,2,2,0],   [0,3,2,2,2]],       // G#-D-B-B-E | G#-B-B-B-D | E-D-B-B-E
   'F:dom7':   [[1,1,0,0,1],   [6,4,3,3,null]],                   // F-C-A-A-Eb | Bb-Eb-C-C
-  'F#:dom7':  [[0,2,1,1,4],   [2,3,4,4,null]],                   // E-C#-Bb-Bb-F# | F#-D-C#-C#
+  'F#:dom7':  [[2,2,1,1,2],   [0,2,1,1,4],   [2,3,4,4,null]],    // F#-C#-Bb-Bb-E | E-C#-Bb-Bb-F# | F#-D-C#-C#
   'G:dom7':   [[3,3,2,2,3],   [3,0,3,3,5]],                      // G-D-B-B-F | G-B-C-C-G
   'G#:dom7':  [[4,4,3,3,4],   [4,1,4,4,null]],                   // G#-Eb-C-C-Gb | G#-C-C#-C#
-  'A:dom7':   [[3,2,0,0,0],   [0,2,3,3,null]],                   // G-C#-A-A-D | E-C#-C-C
+  'A:dom7':   [[3,2,0,0,2],   [3,2,0,0,0],   [0,2,3,3,null]],    // G-C#-A-A-E | G-C#-A-A-D | E-C#-C-C
   'A#:dom7':  [[4,3,1,1,3],   [6,3,1,1,null]],                   // Ab-D-Bb-Bb-F | Bb-D-Bb-Bb
   'B:dom7':   [[2,0,0,0,1],   [2,4,0,0,null]],                   // F#-B-A-A-Eb | F#-D#-A-A
 
@@ -838,28 +863,28 @@ const CHORD_VOICINGS = {
   'C#:maj7':  [[4,1,4,4,3],   [4,0,2,2,null]],                   // G#-C-C#-C#-F | G#-B-B-B
   'D:maj7':   [[2,2,0,0,0],   [2,2,5,5,0]],                      // F#-C#-A-A-D | F#-C#-D-D-D
   'D#:maj7':  [[3,3,1,1,1],   [3,3,6,6,null]],                   // G-D-Bb-Bb-Eb | G-D-Eb-Eb
-  'E:maj7':   [[4,4,2,2,0],   [0,4,2,2,2]],                      // G#-D#-B-B-D | E-D#-B-B-E
+  'E:maj7':   [[4,4,2,2,2],   [4,4,2,2,0],   [0,4,2,2,2]],       // G#-D#-B-B-E | G#-D#-B-B-D | E-D#-B-B-E
   'F:maj7':   [[1,1,0,0,2],   [0,6,3,3,null]],                   // F-C-A-A-E | E-F-C-C
   'F#:maj7':  [[2,2,1,1,3],   [1,7,4,4,null]],                   // F#-C#-Bb-Bb-F | F-F#-C#-C#
   'G:maj7':   [[3,3,2,2,4],   [2,0,5,5,5]],                      // G-D-B-B-F# | F#-B-D-D-G
   'G#:maj7':  [[4,4,3,3,5],   [3,0,6,6,null]],                   // G#-Eb-C-C-G | G-B-Eb-Eb
-  'A:maj7':   [[4,2,0,0,0],   [4,2,4,4,null]],                   // G#-C#-A-A-D | G#-C#-C#-C#
+  'A:maj7':   [[4,2,0,0,2],   [4,2,0,0,0],   [4,2,4,4,null]],    // G#-C#-A-A-E | G#-C#-A-A-D | G#-C#-C#-C#
   'A#:maj7':  [[5,3,1,1,3],   [5,3,6,6,null]],                   // A-D-Bb-Bb-F | A-D-Eb-Eb
-  'B:maj7':   [[6,4,2,2,4],   [6,4,2,2,null]],                   // A#-D#-B-B-F# | A#-D#-B-B
+  'B:maj7':   [[2,0,1,1,1],   [6,4,2,2,4],   [6,4,2,2,null]],    // F#-B-Bb-Bb-Eb | A#-D#-B-B-F# | A#-D#-B-B
 
   // ── MINOR 7th ──────────────────────────────────────────────────────────
-  'C:min7':   [[3,1,1,1,1],   [3,4,3,3,null]],                   // G-C-Bb-Bb-Eb | G-Eb-C-C
+  'C:min7':   [[3,0,1,1,1],   [3,1,1,1,1],   [3,4,3,3,null]],    // G-B-Bb-Bb-Eb | G-C-Bb-Bb-Eb | G-Eb-C-C
   'C#:min7':  [[4,2,2,2,2],   [0,5,4,4,null]],                   // G#-C#-B-B-E | E-E-C#-C#
   'D:min7':   [[1,1,0,0,0],   [6,1,0,0,0]],                      // F-C-A-A-D | Bb-C-A-A-D
   'D#:min7':  [[2,2,1,1,1],   [2,4,1,1,null]],                   // F#-C#-Bb-Bb-Eb | F#-Eb-Bb-Bb
-  'E:min7':   [[0,3,2,2,2],   [0,0,2,2,5]],                      // E-D-B-B-E | E-B-B-B-G
+  'E:min7':   [[3,3,2,2,2],   [0,3,2,2,2],   [0,0,2,2,5]],       // G-D-B-B-E | E-D-B-B-E | E-B-B-B-G
   'F:min7':   [[4,4,3,3,3],   [1,4,8,8,null]],                   // Ab-Eb-C-C-F | F-Eb-F-F
-  'F#:min7':  [[0,2,0,0,4],   [2,2,0,0,null]],                   // E-C#-A-A-F# | F#-C#-A-A
+  'F#:min7':  [[2,2,0,0,2],   [0,2,0,0,4],   [2,2,0,0,null]],    // F#-C#-A-A-E | E-C#-A-A-F# | F#-C#-A-A
   'G:min7':   [[3,3,1,1,3],   [3,6,1,1,0]],                      // G-D-Bb-Bb-F | G-F-Bb-Bb-D
-  'G#:min7':  [[4,4,2,2,4],   [4,0,6,6,null]],                   // G#-Eb-B-B-Gb | G#-B-Eb-Eb
+  'G#:min7':  [[4,4,2,2,3],   [4,4,2,2,4],   [4,0,6,6,null]],    // G#-Eb-B-B-F | G#-Eb-B-B-Gb | G#-B-Eb-Eb
   'A:min7':   [[3,1,0,0,2],   [0,1,3,3,null]],                   // G-C-A-A-E | E-C-C-C
   'A#:min7':  [[4,2,1,1,3],   [1,2,1,1,null]],                   // Ab-C#-Bb-Bb-F | F-C#-Bb-Bb
-  'B:min7':   [[2,0,0,0,0],   [7,3,0,0,4]],                      // F#-B-A-A-D | B-D-A-A-F#
+  'B:min7':   [[2,0,1,1,1],   [2,0,0,0,0],   [7,3,0,0,4]],       // F#-B-Bb-Bb-Eb | F#-B-A-A-D | B-D-A-A-F#
 };
 
 // ── STATE ──────────────────────────────────────────────────────────────────
@@ -1313,7 +1338,14 @@ function updateInfo(activePcs) {
   }
 
   const allOpen = state.positions.every(p => p === 0);
-  const detected = allOpen ? 'Open' : detectChord(activePcs);
+  let detected;
+  if (state.selectedRoot !== null && state.selectedType && !state.manualMode) {
+    const rn = pcName(state.selectedRoot);
+    const ct = CHORD_TYPES[state.selectedType];
+    detected = ct ? rn + ct.suffix : rn;
+  } else {
+    detected = allOpen ? 'Open' : detectChord(activePcs);
+  }
   nameEl.textContent = detected || '—';
 
   const uNames = [...new Set(activePcs.map(p => pcName(p)))];
@@ -1617,6 +1649,7 @@ function toggleRetro() {
   document.body.classList.toggle('retro', state.retro);
   document.getElementById('retroWrap').classList.toggle('on', state.retro);
   buildFretboard();
+  updateVoicingNav();
   render();
 }
 
@@ -1735,7 +1768,7 @@ function onChordSelect(value) {
 function applyVoicing(chordKey, idx) {
   const voicings = CHORD_VOICINGS[chordKey];
   if (voicings && voicings[idx] !== undefined) {
-    state.positions = [...voicings[idx]];
+    state.positions = voicings[idx].map(p => p === null ? 0 : p);
   } else if (!voicings) {
     const [rootName, type] = chordKey.split(':');
     const root = SHARP.indexOf(rootName);
@@ -1751,26 +1784,131 @@ function nextVoicing() {
   if (!voicings || voicings.length <= 1) return;
   state.voicingIndex = (state.voicingIndex + 1) % voicings.length;
   applyVoicing(chordKey, state.voicingIndex);
-  updateAltVoicingBtn();
+  updateVoicingNav();
   render();
 }
 
-function updateAltVoicingBtn() {
-  const btn = document.getElementById('altVoicingBtn');
-  if (!btn) return;
-  if (state.selectedRoot === null || !state.selectedType) {
-    btn.style.display = 'none';
+function prevVoicing() {
+  if (state.selectedRoot === null || !state.selectedType) return;
+  const chordKey = SHARP[state.selectedRoot] + ':' + state.selectedType;
+  const voicings = CHORD_VOICINGS[chordKey];
+  if (!voicings || voicings.length <= 1) return;
+  state.voicingIndex = (state.voicingIndex - 1 + voicings.length) % voicings.length;
+  applyVoicing(chordKey, state.voicingIndex);
+  updateVoicingNav();
+  render();
+}
+
+function selectVoicing(idx) {
+  if (state.selectedRoot === null || !state.selectedType) return;
+  const chordKey = SHARP[state.selectedRoot] + ':' + state.selectedType;
+  const voicings = CHORD_VOICINGS[chordKey];
+  if (!voicings || idx >= voicings.length) return;
+  state.voicingIndex = idx;
+  applyVoicing(chordKey, idx);
+  updateVoicingNav();
+  render();
+}
+
+function updateVoicingNav() {
+  const nav = document.getElementById('voicingNav');
+  if (!nav) return;
+  if (state.selectedRoot === null || !state.selectedType || state.manualMode) {
+    nav.style.display = 'none';
     return;
   }
   const chordKey = SHARP[state.selectedRoot] + ':' + state.selectedType;
   const voicings = CHORD_VOICINGS[chordKey];
   if (!voicings || voicings.length <= 1) {
-    btn.style.display = 'none';
+    nav.style.display = 'none';
     return;
   }
-  btn.style.display = '';
-  btn.textContent = 'Alt Voicing ' + (state.voicingIndex + 1) + '/' + voicings.length;
+  nav.style.display = '';
+  document.getElementById('voicingLabel').textContent =
+    'Voicing ' + (state.voicingIndex + 1) + ' of ' + voicings.length;
+
+  const thumbs = document.getElementById('voicingThumbs');
+  thumbs.innerHTML = '';
+  const TW = 80, TH = 60;
+  voicings.forEach((v, i) => {
+    const c = document.createElement('canvas');
+    c.width = TW * 2; c.height = TH * 2;
+    c.style.width = TW + 'px'; c.style.height = TH + 'px';
+    c.className = 'voicing-thumb' + (i === state.voicingIndex ? ' active' : '');
+    c.onclick = () => selectVoicing(i);
+    drawThumb(c, v);
+    thumbs.appendChild(c);
+  });
 }
+
+function drawThumb(canvas, positions) {
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  const isRetro = state.retro;
+  const pad = { left: 18, right: 8, top: 10, bottom: 10 };
+  const neckW = W - pad.left - pad.right;
+  const neckH = H - pad.top - pad.bottom;
+  const fretW = neckW / NF;
+  const strGap = neckH / (NS - 1);
+
+  // Background
+  ctx.fillStyle = isRetro ? '#0a0015' : '#1a1206';
+  ctx.fillRect(0, 0, W, H);
+
+  // Neck
+  ctx.fillStyle = isRetro ? '#110022' : '#2a1e0e';
+  ctx.fillRect(pad.left, pad.top, neckW, neckH);
+
+  // Nut
+  ctx.fillStyle = isRetro ? '#ff00ff' : '#d4c49a';
+  ctx.fillRect(pad.left - 3, pad.top, 3, neckH);
+
+  // Frets
+  ctx.strokeStyle = isRetro ? '#00ffff33' : '#5a4a2a';
+  ctx.lineWidth = 1;
+  for (let f = 1; f <= NF; f++) {
+    const x = pad.left + f * fretW;
+    ctx.beginPath(); ctx.moveTo(x, pad.top); ctx.lineTo(x, pad.top + neckH); ctx.stroke();
+  }
+
+  // Strings
+  ctx.lineWidth = 1;
+  for (let s = 0; s < NS; s++) {
+    const y = pad.top + s * strGap;
+    ctx.strokeStyle = isRetro ?
+      ['#ff69b4','#ff8c00','#00ff41','#00ffff','#bf5fff'][s] :
+      '#8a7a5a';
+    ctx.beginPath(); ctx.moveTo(pad.left, y); ctx.lineTo(pad.left + neckW, y); ctx.stroke();
+  }
+
+  // Dots
+  const r = 6;
+  positions.forEach((p, s) => {
+    const y = pad.top + s * strGap;
+    if (p === null || p === 0) {
+      // Open circle
+      ctx.strokeStyle = isRetro ? '#00ffff' : '#a8d060';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.arc(pad.left - 10, y, r * 0.6, 0, Math.PI * 2); ctx.stroke();
+    } else if (p === -1) {
+      // Muted X
+      ctx.strokeStyle = isRetro ? '#ff004488' : '#5a4a3a';
+      ctx.lineWidth = 1.5;
+      const cx = pad.left - 10;
+      const sz = r * 0.5;
+      ctx.beginPath(); ctx.moveTo(cx - sz, y - sz); ctx.lineTo(cx + sz, y + sz); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(cx + sz, y - sz); ctx.lineTo(cx - sz, y + sz); ctx.stroke();
+    } else {
+      // Fretted dot
+      const x = pad.left + (p - 0.5) * fretW;
+      ctx.fillStyle = isRetro ? '#ff00ff' : '#f0e060';
+      ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
+    }
+  });
+}
+
+// Backwards compat alias
+function updateAltVoicingBtn() { updateVoicingNav(); }
 
 function togglePOV() {
   state.pov = !state.pov;
