@@ -68,12 +68,6 @@ select:focus { outline: 2px solid #c8a060; outline-offset: 1px; }
 }
 .btn:hover { background: #4a3a20; }
 
-.alt-voicing-btn {
-  background: #1e2808; color: #a8d060; border: 1px solid #4a7020;
-  border-radius: 8px; padding: 8px 14px; font-size: .82rem; cursor: pointer;
-  transition: background .15s; letter-spacing: .02em; display: none;
-}
-.alt-voicing-btn:hover { background: #2a3a10; }
 
 .pov-toggle {
   display: flex; align-items: center; gap: 8px;
@@ -401,10 +395,6 @@ body.retro .btn, body.retro .play-chord-btn, body.retro .btn-accent, body.retro 
   text-shadow: 0 0 4px #00ffff; font-family: 'Press Start 2P', monospace; font-size: .55rem;
 }
 body.retro .btn:hover, body.retro .play-chord-btn:hover { background: #2a0060; }
-body.retro .alt-voicing-btn {
-  background: #001a00; border-color: #00ff00; color: #00ff00;
-  text-shadow: 0 0 6px #00ff00;
-}
 body.retro .pov-toggle { background: #0f0028; border-color: #6600cc; }
 body.retro .pov-toggle .pov-toggle-label { color: #aa88dd; }
 body.retro .pov-toggle.active { background: #3300aa; border-color: #ff00ff; }
@@ -461,7 +451,7 @@ body.retro .gate-submit { background: linear-gradient(135deg, #3300aa, #1a0060);
 .seq-controls { display: flex; gap: 8px; align-items: center; justify-content: center; margin-bottom: 10px; flex-wrap: wrap; }
 .seq-save-row { display: flex; gap: 8px; align-items: center; justify-content: center; margin-top: 12px; flex-wrap: wrap; }
 .seq-thumbs { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; min-height: 40px; padding: 6px 0; }
-.seq-thumbs:empty::after { content: 'Select a chord and tap "+ Add" to build a sequence.'; color: #5a4a30; font-size: .72rem; font-style: italic; }
+.seq-thumbs:empty::after { content: attr(data-empty); color: #5a4a30; font-size: .72rem; font-style: italic; }
 .seq-chord { display: flex; flex-direction: column; align-items: center; gap: 3px; position: relative; }
 .seq-chord-name { font-size: .68rem; color: #b09070; text-align: center; max-width: 80px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .seq-chord-num { font-size: .58rem; color: #5a4a30; }
@@ -474,6 +464,7 @@ body.retro .gate-submit { background: linear-gradient(135deg, #3300aa, #1a0060);
 body.retro .seq-section { background: #0a0020; border-color: #4400aa; }
 body.retro .seq-label { color: #8866bb; }
 body.retro .seq-thumbs:empty::after { color: #6644aa; }
+.seq-thumbs:empty { display: flex; align-items: center; justify-content: center; }
 body.retro .seq-chord-name { color: #00ffff; text-shadow: 0 0 4px #00ffff; }
 body.retro .seq-chord-num { color: #8866bb; }
 body.retro .seq-arrow { background: #1a0033; color: #00ffff; border-color: #00ffff; }
@@ -481,20 +472,33 @@ body.retro .seq-arrow:hover { background: #2a0055; }
 body.retro .seq-remove { background: #2a0020; color: #ff0044; border-color: #ff0044; }
 body.retro .seq-remove:hover { background: #3a0030; }
 
+/* ===== TOAST ===== */
+.toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(20px); background: #2a3a10; color: #a8d060; border: 1px solid #4a7020; border-radius: 8px; padding: 10px 20px; font-size: .82rem; opacity: 0; transition: opacity .3s, transform .3s; pointer-events: none; z-index: 9999; }
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+body.retro .toast { background: #1a0040; color: #00ffff; border-color: #6600cc; text-shadow: 0 0 4px #00ffff; }
+
 /* ===== SAFE AREA (iPhone notch) ===== */
 body { padding-bottom: max(40px, env(safe-area-inset-bottom)); }
 
 @media (max-width: 500px) {
   h1 { font-size: 1.4rem; }
   body { padding: 20px 10px max(32px, env(safe-area-inset-bottom)); }
-  select { min-width: 160px; font-size: .85rem; }
+  select { min-width: 120px; font-size: .85rem; }
   .subtitle { font-size: .65rem; letter-spacing: .07em; }
   .sub-br { display: block; }
   .sub-sep { display: none; }
+  .voicing-thumbs, .seq-thumbs { gap: 8px; }
+  .voicing-thumb, .seq-chord canvas { width: 64px !important; height: 48px !important; }
+  .seq-chord-name { font-size: .6rem; max-width: 64px; }
+  .seq-section { padding: 10px 10px; }
+  .seq-controls { gap: 6px; }
+  .torrente-chords { gap: 6px; }
+  .torrente-chord { padding: 8px 10px; min-width: 80px; }
 }
 </style>
 </head>
 <body>
+<div class="toast" id="toast"></div>
 
 <!-- Password Gate -->
 <div id="gate-overlay">
@@ -519,7 +523,7 @@ function gateSubmit() {
     try { sessionStorage.setItem('mejoranaAuth','true'); } catch(e){}
     gateUnlock();
   } else {
-    document.getElementById('gate-error').textContent = 'Incorrect password';
+    document.getElementById('gate-error').textContent = T('incorrectPw');
     document.getElementById('gate-input').value = '';
     document.getElementById('gate-input').focus();
   }
@@ -664,7 +668,7 @@ try { if (sessionStorage.getItem('mejoranaAuth') === 'true') gateUnlock(); } cat
     <button class="btn" onclick="seqClear()">Clear</button>
     <button class="export-btn" id="seqExportBtn" onclick="exportSequenceImage()" style="display:none;">Export Sequence</button>
   </div>
-  <div class="seq-thumbs" id="seqThumbs"></div>
+  <div class="seq-thumbs" id="seqThumbs" data-empty="Select a chord and tap &quot;+ Add&quot; to build a sequence."></div>
   <div class="seq-save-row">
     <span class="ctrl-label" id="seqSelLabel">Sequences:</span>
     <select id="seqSel" onchange="onSeqSelect(this.value)" style="min-width:160px;">
@@ -714,6 +718,18 @@ const LANG = {
     selectOrClick: 'Select a chord or click frets to build one.',
     customVoicing: 'Custom voicing',
     major:'Major', minor:'Minor', dom7:'Dominant 7', maj7:'Major 7', min7:'Minor 7',
+    noteLabels: 'Note Labels', retroMode: 'Retro Mode',
+    seqLabel: 'Chord Sequence', seqAdd: '+ Add to Sequence', seqExport: 'Export Sequence',
+    seqSaved: '— Saved sequences —', seqSave: '+ Save', seqPlaceholder: 'Sequence name…',
+    seqEmpty: 'Select a chord and tap "+ Add" to build a sequence.',
+    torrenteLabel: 'Torrente — Complementary Chords',
+    exportImage: 'Export as Image', exported: 'Image saved!',
+    notes: 'Notes:', incorrectPw: 'Incorrect password',
+    micRequesting: 'Requesting microphone…',
+    micDismissed: 'Microphone access dismissed — tap the button to try again.',
+    micNotFound: 'No microphone found on this device.',
+    micError: 'Could not access microphone',
+    voicingOf: 'of',
   },
   es: {
     chordLabel: 'Acorde:', myChords: 'Mis Acordes:', savePlaceholder: 'Nombre del acorde…',
@@ -734,6 +750,18 @@ const LANG = {
     selectOrClick: 'Selecciona un acorde o haz clic en los trastes.',
     customVoicing: 'Posición personalizada',
     major:'Mayor', minor:'Menor', dom7:'Séptima Dominante', maj7:'Séptima Mayor', min7:'Séptima Menor',
+    noteLabels: 'Notas', retroMode: 'Modo Retro',
+    seqLabel: 'Secuencia de Acordes', seqAdd: '+ Agregar', seqExport: 'Exportar Secuencia',
+    seqSaved: '— Secuencias guardadas —', seqSave: '+ Guardar', seqPlaceholder: 'Nombre de secuencia…',
+    seqEmpty: 'Selecciona un acorde y toca "+ Agregar" para armar una secuencia.',
+    torrenteLabel: 'Torrente — Acordes Complementarios',
+    exportImage: 'Exportar Imagen', exported: '¡Imagen guardada!',
+    notes: 'Notas:', incorrectPw: 'Contraseña incorrecta',
+    micRequesting: 'Solicitando micrófono…',
+    micDismissed: 'Acceso al micrófono cancelado — toca el botón para intentar de nuevo.',
+    micNotFound: 'No se encontró micrófono en este dispositivo.',
+    micError: 'No se pudo acceder al micrófono',
+    voicingOf: 'de',
   }
 };
 
@@ -812,6 +840,26 @@ function applyI18n() {
   // Main chord placeholder
   const chordSel = document.getElementById('chordSel');
   if (chordSel && chordSel.options[0]) chordSel.options[0].text = L.selectChord;
+  // Note Labels, Retro Mode, Export, Sequence section
+  setT('noteLabelsText', L.noteLabels);
+  setT('retroText', L.retroMode);
+  setT('seqSectionLabel', L.seqLabel);
+  setT('seqAddBtn', L.seqAdd);
+  setT('seqExportBtn', L.seqExport);
+  setT('seqSelLabel', L.seqLabel + ':');
+  const seqSel = document.getElementById('seqSel');
+  if (seqSel && seqSel.options[0]) seqSel.options[0].text = L.seqSaved;
+  const seqThumbs = document.getElementById('seqThumbs');
+  if (seqThumbs) seqThumbs.setAttribute('data-empty', L.seqEmpty);
+  const seqInput = document.getElementById('seqSaveNameInput');
+  if (seqInput) seqInput.placeholder = L.seqPlaceholder;
+  const exportBtn = document.getElementById('exportBtn');
+  if (exportBtn) exportBtn.textContent = L.exportImage;
+  // Torrente label
+  const torrenteLabel = document.querySelector('.torrente-label');
+  if (torrenteLabel) torrenteLabel.textContent = L.torrenteLabel;
+  // Update voicing nav label if visible
+  updateVoicingNav();
   updateHint();
 }
 
@@ -869,10 +917,10 @@ const CHORD_VOICINGS = {
   'C:major':  [[3,1,3,3,2],   [3,-1,3,3,2]],                      // G-C-C-C-E | G-X-C-C-E
   'C#:major': [[4,2,4,4,3],   [4,2,2,2,null]],                   // G#-C#-C#-C#-F | G#-C#-B-B
   'D:major':  [[2,3,0,0,0],   [2,3,5,5,0]],                      // F#-D-A-A-D | F#-D-D-D-D
-  'D#:major': [[3,4,1,1,1],   [3,4,6,6,1]],                      // G-Eb-Bb-Bb-Eb | G-Eb-Eb-Eb-Eb
+  'D#:major': [[3,4,1,1,1]],                                      // G-Eb-Bb-Bb-Eb
   'E:major':  [[4,0,2,2,2],   [0,null,2,2,2]],                    // G#-B-B-B-E | E-B-B-E
-  'F:major':  [[1,1,0,0,3],   [1,6,3,3,3]],                      // F-C-A-A-F | F-F-C-C-F
-  'F#:major': [[2,2,1,1,-1],  [2,7,4,4,4]],                      // F#-C#-Bb-Bb-X | F#-F#-C#-C#-F#
+  'F:major':  [[1,1,0,0,3]],                                      // F-C-A-A-F
+  'F#:major': [[2,2,1,1,-1]],                                     // F#-C#-Bb-Bb-X
   'G:major':  [[3,0,2,2,0],   [3,0,5,5,5]],                      // G-B-B-B-D | G-B-D-D-G
   'G#:major': [[4,4,3,3,-1],  [4,1,4,4,null]],                   // G#-D#-C-C-X | G#-C-C#-C#
   'A:major':  [[0,2,0,0,2],   [5,2,0,0,null], [5,2,4,4,null]],  // E-C#-A-A-E | A-C#-A-A | A-C#-C#-C#
@@ -891,7 +939,7 @@ const CHORD_VOICINGS = {
   'G#:minor': [[4,4,2,2,-1]],                                     // G#-D#-B-B-X
   'A:minor':  [[0,1,0,0,2],   [5,1,0,0,null],[0,1,3,3,null]],   // E-C-A-A-E | A-C-A-A | E-C-C-C
   'A#:minor': [[1,2,1,1,-1]],                                     // F-C#-Bb-Bb-X
-  'B:minor':  [[0,0,5,5,4],   [7,3,2,2,4]],                      // E-B-D-D-F# | B-D-B-B-F#
+  'B:minor':  [[0,0,5,5,4]],                                      // E-B-D-D-F#
 
   // ── DOMINANT 7th ───────────────────────────────────────────────────────
   'C:dom7':   [[3,1,1,1,2]],                                      // G-C-Bb-Bb-E
@@ -908,32 +956,32 @@ const CHORD_VOICINGS = {
   'B:dom7':   [[2,0,0,0,1],   [2,4,0,0,null]],                   // F#-B-A-A-Eb | F#-D#-A-A
 
   // ── MAJOR 7th ──────────────────────────────────────────────────────────
-  'C:maj7':   [[3,0,3,3,2],   [8,0,3,3,2]],                      // G-B-C-C-E | C-B-C-C-E
+  'C:maj7':   [[3,0,3,3,2]],                                      // G-B-C-C-E
   'C#:maj7':  [[4,1,4,4,3],   [4,0,2,2,null]],                   // G#-C-C#-C#-F | G#-B-B-B
   'D:maj7':   [[2,2,0,0,0],   [2,2,5,5,0]],                      // F#-C#-A-A-D | F#-C#-D-D-D
   'D#:maj7':  [[3,3,1,1,1],   [3,3,6,6,null]],                   // G-D-Bb-Bb-Eb | G-D-Eb-Eb
   'E:maj7':   [[4,4,2,2,2],   [4,4,2,2,0],   [0,4,2,2,2]],       // G#-D#-B-B-E | G#-D#-B-B-D | E-D#-B-B-E
   'F:maj7':   [[1,1,0,0,2],   [0,6,3,3,null]],                   // F-C-A-A-E | E-F-C-C
-  'F#:maj7':  [[2,2,1,1,3],   [1,7,4,4,null]],                   // F#-C#-Bb-Bb-F | F-F#-C#-C#
+  'F#:maj7':  [[2,2,1,1,3]],                                      // F#-C#-Bb-Bb-F
   'G:maj7':   [[3,3,2,2,4],   [2,0,5,5,5]],                      // G-D-B-B-F# | F#-B-D-D-G
   'G#:maj7':  [[4,4,3,3,5],   [3,0,6,6,null]],                   // G#-Eb-C-C-G | G-B-Eb-Eb
   'A:maj7':   [[4,2,0,0,2],   [4,2,0,0,0],   [4,2,4,4,null]],    // G#-C#-A-A-E | G#-C#-A-A-D | G#-C#-C#-C#
   'A#:maj7':  [[5,3,1,1,3],   [5,3,6,6,null]],                   // A-D-Bb-Bb-F | A-D-Eb-Eb
-  'B:maj7':   [[2,0,1,1,1],   [6,4,2,2,4],   [6,4,2,2,null]],    // F#-B-Bb-Bb-Eb | A#-D#-B-B-F# | A#-D#-B-B
+  'B:maj7':   [[2,0,1,1,1]],                                      // F#-B-Bb-Bb-Eb
 
   // ── MINOR 7th ──────────────────────────────────────────────────────────
   'C:min7':   [[3,0,1,1,1],   [3,1,1,1,1],   [3,4,3,3,null]],    // G-B-Bb-Bb-Eb | G-C-Bb-Bb-Eb | G-Eb-C-C
   'C#:min7':  [[4,2,2,2,2],   [0,5,4,4,null]],                   // G#-C#-B-B-E | E-E-C#-C#
-  'D:min7':   [[1,1,0,0,0],   [6,1,0,0,0]],                      // F-C-A-A-D | Bb-C-A-A-D
+  'D:min7':   [[1,1,0,0,0]],                                      // F-C-A-A-D
   'D#:min7':  [[2,2,1,1,1],   [2,4,1,1,null]],                   // F#-C#-Bb-Bb-Eb | F#-Eb-Bb-Bb
   'E:min7':   [[3,3,2,2,2],   [0,3,2,2,2],   [0,0,2,2,5]],       // G-D-B-B-E | E-D-B-B-E | E-B-B-B-G
-  'F:min7':   [[4,4,3,3,3],   [1,4,8,8,null]],                   // Ab-Eb-C-C-F | F-Eb-F-F
+  'F:min7':   [[4,4,3,3,3]],                                      // Ab-Eb-C-C-F
   'F#:min7':  [[2,2,0,0,2],   [0,2,0,0,4],   [2,2,0,0,null]],    // F#-C#-A-A-E | E-C#-A-A-F# | F#-C#-A-A
-  'G:min7':   [[3,3,1,1,3],   [3,6,1,1,0]],                      // G-D-Bb-Bb-F | G-F-Bb-Bb-D
-  'G#:min7':  [[4,4,2,2,3],   [4,4,2,2,4],   [4,0,6,6,null]],    // G#-Eb-B-B-F | G#-Eb-B-B-Gb | G#-B-Eb-Eb
+  'G:min7':   [[3,3,1,1,3]],                                      // G-D-Bb-Bb-F
+  'G#:min7':  [[4,4,2,2,3],   [4,4,2,2,4]],                       // G#-Eb-B-B-F | G#-Eb-B-B-Gb
   'A:min7':   [[3,1,0,0,2],   [0,1,3,3,null]],                   // G-C-A-A-E | E-C-C-C
   'A#:min7':  [[4,2,1,1,3],   [1,2,1,1,null]],                   // Ab-C#-Bb-Bb-F | F-C#-Bb-Bb
-  'B:min7':   [[2,0,1,1,1],   [2,0,0,0,0],   [7,3,0,0,4]],       // F#-B-Bb-Bb-Eb | F#-B-A-A-D | B-D-A-A-F#
+  'B:min7':   [[2,0,1,1,1],   [2,0,0,0,0]],                       // F#-B-Bb-Bb-Eb | F#-B-A-A-D
 };
 
 // ── STATE ──────────────────────────────────────────────────────────────────
@@ -1398,7 +1446,7 @@ function updateInfo(activePcs) {
   nameEl.textContent = detected || '—';
 
   const uNames = [...new Set(activePcs.map(p => pcName(p)))];
-  notesEl.textContent = 'Notes: ' + uNames.join(' · ');
+  notesEl.textContent = T('notes') + ' ' + uNames.join(' · ');
 
   const parts = [];
   const aCourseSync = state.positions[2] !== null && state.positions[2] === state.positions[3];
@@ -1474,8 +1522,12 @@ function loadTorrenteChord(root, type) {
   document.getElementById('chordSel').value = `${SHARP[root]}:${type}`;
   applyVoicing(chordKey, 0);
   updateHint();
-  updateAltVoicingBtn();
+  updateVoicingNav();
   render();
+  setTimeout(function() {
+    var el = document.getElementById('torrenteDisplay');
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, 50);
 }
 
 // ── AUDIO ENGINE ───────────────────────────────────────────────────────────
@@ -1841,6 +1893,7 @@ function renderSequence() {
     const label = document.createElement('div');
     label.className = 'seq-chord-name';
     label.textContent = chord.name;
+    label.title = chord.name;
     wrap.appendChild(label);
 
     const actions = document.createElement('div');
@@ -1965,7 +2018,7 @@ function onChordSelect(value) {
 
   applyVoicing(rootName + ':' + type, 0);
   updateHint();
-  updateAltVoicingBtn();
+  updateVoicingNav();
   render();
 }
 
@@ -2029,7 +2082,7 @@ function updateVoicingNav() {
   }
   nav.style.display = '';
   document.getElementById('voicingLabel').textContent =
-    'Voicing ' + (state.voicingIndex + 1) + ' of ' + voicings.length;
+    'Voicing ' + (state.voicingIndex + 1) + ' ' + T('voicingOf') + ' ' + voicings.length;
 
   const thumbs = document.getElementById('voicingThumbs');
   thumbs.innerHTML = '';
@@ -2112,7 +2165,6 @@ function drawThumb(canvas, positions) {
 }
 
 // Backwards compat alias
-function updateAltVoicingBtn() { updateVoicingNav(); }
 
 function togglePOV() {
   state.pov = !state.pov;
@@ -2132,7 +2184,7 @@ function clearAll() {
   state.manualMode = false;
   document.getElementById('chordSel').value = '';
   updateHint();
-  updateAltVoicingBtn();
+  updateVoicingNav();
   render();
 }
 
@@ -2145,6 +2197,13 @@ function updateHint() {
   else if (!pov && manual)  hint = T('hintMainManual');
   else                      hint = T('hintMain');
   document.getElementById('modeHint').textContent = hint;
+}
+
+function showToast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(function() { el.classList.remove('show'); }, 2000);
 }
 
 function exportChordImage() {
@@ -2416,6 +2475,7 @@ function exportChordImage() {
     a.download = `mejorana_${name}.jpg`;
     a.click();
     URL.revokeObjectURL(url);
+    showToast(T('exported'));
   }, 'image/jpeg', 0.95);
 }
 
@@ -2570,6 +2630,7 @@ function exportSequenceImage() {
     a.download = `mejorana_${fname}.jpg`;
     a.click();
     URL.revokeObjectURL(url);
+    showToast(T('exported'));
   }, 'image/jpeg', 0.95);
 }
 
@@ -2691,7 +2752,7 @@ async function toggleTunerMic() {
     return;
   }
 
-  statusEl.textContent = 'Requesting microphone…';
+  statusEl.textContent = T('micRequesting');
   btn.disabled = true;
 
   try {
@@ -2715,26 +2776,24 @@ async function toggleTunerMic() {
     btn.disabled = false;
     btn.textContent = T('tunerStart');
     btn.classList.remove('active');
-    // Detect if user blocked vs dismissed vs genuinely unsupported
     if (e.name === 'NotAllowedError' || e.name === 'PermissionDeniedError') {
-      // Check if it was permanently blocked (not just dismissed)
       if (navigator.permissions) {
         navigator.permissions.query({ name: 'microphone' }).then(result => {
           if (result.state === 'denied') {
-            statusEl.innerHTML = `Microphone blocked. To enable: click the 🔒 icon in your browser's address bar → Site settings → Microphone → Allow, then reload.`;
+            statusEl.textContent = T('tunerDenied');
           } else {
-            statusEl.textContent = 'Microphone access dismissed — tap the button to try again.';
+            statusEl.textContent = T('micDismissed');
           }
         }).catch(() => {
-          statusEl.innerHTML = `Microphone blocked. To enable: click the 🔒 icon in your address bar → Microphone → Allow, then reload.`;
+          statusEl.textContent = T('tunerDenied');
         });
       } else {
-        statusEl.innerHTML = `Microphone blocked. To enable: click the 🔒 icon in your address bar → Microphone → Allow, then reload.`;
+        statusEl.textContent = T('tunerDenied');
       }
     } else if (e.name === 'NotFoundError') {
-      statusEl.textContent = 'No microphone found on this device.';
+      statusEl.textContent = T('micNotFound');
     } else {
-      statusEl.textContent = 'Could not access microphone: ' + e.message;
+      statusEl.textContent = T('micError') + ': ' + e.message;
     }
   }
 }
