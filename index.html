@@ -6,363 +6,380 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Mejorana">
-<meta name="theme-color" content="#1a1510">
+<meta name="theme-color" content="#12100d">
 <title>Mejorana</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&family=Press+Start+2P&display=swap" rel="stylesheet">
 <style>
+:root {
+  --bg: #12100d;
+  --surface: #1a1713;
+  --surface-2: #221e19;
+  --surface-3: #2b261f;
+  --line: #2e2922;
+  --line-strong: #3e372e;
+  --text: #ece4d6;
+  --muted: #a0957f;
+  --faint: #6f6656;
+  --accent: #d9a441;
+  --accent-soft: rgba(217,164,65,.14);
+  --accent-ink: #1c1407;
+  --ok: #7fbf7a;
+  --danger: #d0705a;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --serif: 'Fraunces', Georgia, 'Times New Roman', serif;
+  --sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+}
+
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
-  background: #1a1510;
-  color: #e0d5c0;
+  font-family: var(--sans);
+  font-size: 14px;
+  line-height: 1.5;
+  background: var(--bg);
+  color: var(--text);
   min-height: 100vh;
-  padding: 28px 16px 40px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  -webkit-font-smoothing: antialiased;
+  padding-bottom: max(24px, env(safe-area-inset-bottom));
 }
 
-h1 { font-size: 1.75rem; font-weight: 700; color: #f0e0a0; letter-spacing: .02em; margin-bottom: 4px; }
-.subtitle { font-size: .75rem; color: #5a4a30; margin-bottom: 12px; text-transform: uppercase; letter-spacing: .12em; text-align: center; }
-.sub-br { display: none; }
+button, select, input { font-family: inherit; }
+button:focus-visible, select:focus-visible, input:focus-visible, .toggle-wrap:focus-within .toggle-track {
+  outline: 2px solid var(--accent); outline-offset: 2px;
+}
+.icon { width: 16px; height: 16px; flex-shrink: 0; stroke: currentColor; fill: none; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
 
-/* ===== SETTINGS ROW ===== */
-.settings-row {
-  display: flex; gap: 8px; align-items: center; margin-bottom: 16px;
-  flex-wrap: wrap; justify-content: center;
+/* ===== TOP BAR ===== */
+.topbar {
+  position: sticky; top: 0; z-index: 50;
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  padding: 14px max(24px, env(safe-area-inset-left));
+  background: rgba(18,16,13,.86);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--line);
 }
-.pill-toggle {
-  display: flex; border: 1px solid #5a4530; border-radius: 20px; overflow: hidden;
-  background: #231a0c;
+.brand { display: flex; align-items: baseline; gap: 12px; min-width: 0; }
+h1 {
+  font-family: var(--serif); font-weight: 500; font-size: 1.5rem;
+  letter-spacing: -.01em; color: var(--text); line-height: 1;
 }
-.pill-toggle button {
-  background: transparent; color: #7a6a50; border: none;
-  padding: 5px 14px; font-size: .78rem; cursor: pointer;
-  letter-spacing: .06em; text-transform: uppercase; transition: background .15s, color .15s;
+.subtitle { font-size: .8rem; color: var(--faint); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.settings-row { display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
+
+/* Segmented control */
+.seg {
+  display: inline-flex; padding: 3px; gap: 2px;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 999px;
 }
-.pill-toggle button.active {
-  background: #3a2808; color: #f0e0a0;
+.seg button {
+  background: transparent; color: var(--muted); border: none; border-radius: 999px;
+  padding: 5px 12px; font-size: .78rem; font-weight: 500; cursor: pointer;
+  transition: background .15s, color .15s; white-space: nowrap;
+}
+.seg button:hover { color: var(--text); }
+.seg button.active { background: var(--text); color: var(--bg); }
+
+/* ===== LAYOUT ===== */
+.app {
+  width: 100%; max-width: 1040px; margin: 0 auto;
+  padding: 24px 24px 0;
+  display: flex; flex-direction: column; gap: 16px;
+}
+.panel {
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 18px 20px;
+}
+.panel-title {
+  font-size: .8rem; font-weight: 600; color: var(--muted); margin-bottom: 12px;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
 }
 
-.controls {
-  display: flex; gap: 10px; align-items: center; margin-bottom: 14px;
-  flex-wrap: wrap; justify-content: center;
-}
-.ctrl-label { font-size: .72rem; color: #7a6a50; text-transform: uppercase; letter-spacing: .06em; }
+/* ===== TOOLBAR ===== */
+.toolbar { display: grid; grid-template-columns: minmax(220px, 1.2fr) minmax(220px, 1fr) auto; gap: 16px 20px; align-items: end; }
+.field { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.field-row { display: flex; gap: 8px; align-items: center; }
+.field-row select { flex: 1; min-width: 0; }
+.ctrl-label { font-size: .78rem; font-weight: 500; color: var(--muted); }
 
 select {
-  background: #231a0c; color: #e0d5c0; border: 1px solid #5a4530; border-radius: 8px;
-  padding: 8px 32px 8px 14px; font-size: .9rem; cursor: pointer;
+  width: 100%;
+  background-color: var(--surface-2); color: var(--text);
+  border: 1px solid var(--line-strong); border-radius: var(--radius-sm);
+  padding: 9px 34px 9px 12px; font-size: .9rem; cursor: pointer;
   appearance: none; -webkit-appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23a09070' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-  background-repeat: no-repeat; background-position: right 10px center; min-width: 200px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23a0957f' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 12px center;
+  transition: border-color .15s;
 }
-select:focus { outline: 2px solid #c8a060; outline-offset: 1px; }
+select:hover { border-color: #51483c; }
+#chordSel { font-weight: 500; }
 
-.btn {
-  background: #3a2a15; color: #f0e0a0; border: 1px solid #7a5a30;
-  border-radius: 8px; padding: 8px 18px; font-size: .9rem; cursor: pointer; transition: background .15s;
+/* Buttons */
+.btn, .btn-accent, .btn-danger, .export-btn, .play-chord-btn, .tuner-mic-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+  border-radius: var(--radius-sm); padding: 8px 14px;
+  font-size: .85rem; font-weight: 500; cursor: pointer; white-space: nowrap;
+  transition: background .15s, border-color .15s, color .15s;
 }
-.btn:hover { background: #4a3a20; }
-
-
-.pov-toggle {
-  display: flex; align-items: center; gap: 8px;
-  background: #231a0c; border: 1px solid #5a4530; border-radius: 8px; padding: 6px 14px;
-  cursor: pointer; user-select: none; transition: background .15s;
+.btn, .export-btn, .tuner-mic-btn {
+  background: var(--surface-2); color: var(--text); border: 1px solid var(--line-strong);
 }
-.pov-toggle:hover { background: #2e2210; }
-.pov-toggle.active { background: #3a2808; border-color: #c8a060; }
-.pov-toggle-icon { font-size: 1.1rem; }
-.pov-toggle-label { font-size: .8rem; color: #c0a070; }
-.pov-toggle.active .pov-toggle-label { color: #f0e0a0; }
+.btn:hover, .export-btn:hover, .tuner-mic-btn:hover { background: var(--surface-3); border-color: #51483c; }
+.btn.active { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
+.btn-ghost { background: transparent; border-color: transparent; color: var(--muted); }
+.btn-ghost:hover { background: var(--surface-2); color: var(--text); border-color: var(--line); }
+.btn-accent, .play-chord-btn {
+  background: var(--accent); color: var(--accent-ink); border: 1px solid var(--accent); font-weight: 600;
+}
+.btn-accent:hover, .play-chord-btn:hover { background: #e4b252; }
+.btn-danger { background: transparent; color: var(--danger); border: 1px solid rgba(208,112,90,.4); }
+.btn-danger:hover { background: rgba(208,112,90,.1); }
+.btn-icon { padding: 8px; }
+.play-chord-btn { display: none; }
+.play-chord-btn.visible { display: inline-flex; }
+.play-chord-btn:active, .btn:active { transform: translateY(1px); }
 
+.save-name-wrap {
+  display: none; gap: 8px; align-items: center; grid-column: 1 / -1;
+}
+.save-name-wrap.visible { display: flex; }
+.save-name-input {
+  flex: 1; max-width: 320px;
+  background: var(--surface-2); color: var(--text); border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm); padding: 8px 12px; font-size: .88rem; outline: none;
+}
+.save-name-input:focus { border-color: var(--accent); }
+
+/* ===== STAGE (fretboard) ===== */
+.panel.stage { padding: 0; overflow: hidden; }
+.stage-head {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px 20px; flex-wrap: wrap;
+  padding: 14px 20px; border-bottom: 1px solid var(--line);
+}
+.listen-row { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+.stage-actions { display: flex; align-items: center; gap: 8px; }
+.stage-body { padding: 28px 20px 16px; }
 .mode-hint {
-  font-size: .68rem; color: #4a3a22; margin-bottom: 18px; text-align: center;
+  font-size: .78rem; color: var(--faint); text-align: center;
+  padding: 12px 20px; border-top: 1px solid var(--line);
 }
 
-/* ===== FRETBOARD CONTAINER ===== */
+/* Toggle switch */
+.toggle-wrap { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; user-select: none; }
+.toggle-switch { position: relative; width: 32px; height: 18px; flex-shrink: 0; }
+.toggle-switch input { opacity: 0; width: 0; height: 0; position: absolute; }
+.toggle-track {
+  position: absolute; inset: 0; border-radius: 9px;
+  background: var(--surface-3); border: 1px solid var(--line-strong);
+  transition: background .2s, border-color .2s;
+}
+.toggle-switch input:checked ~ .toggle-track { background: var(--accent); border-color: var(--accent); }
+.toggle-thumb {
+  position: absolute; top: 2px; left: 2px; width: 12px; height: 12px; border-radius: 50%;
+  background: var(--muted); transition: transform .2s, background .2s;
+}
+.toggle-switch input:checked ~ .toggle-track .toggle-thumb { transform: translateX(14px); background: var(--accent-ink); }
+.toggle-text { font-size: .85rem; color: var(--muted); transition: color .15s; }
+.toggle-wrap.on .toggle-text { color: var(--text); }
+
+/* Fretboard */
+.fretboard-scroll {
+  overflow-x: auto; overflow-y: visible; -webkit-overflow-scrolling: touch;
+  padding-bottom: 6px; display: flex;
+}
+.fretboard-scroll > #fretboard-mount { margin: 0 auto; }
+.fretboard-scroll::-webkit-scrollbar { height: 4px; }
+.fretboard-scroll::-webkit-scrollbar-track { background: transparent; }
+.fretboard-scroll::-webkit-scrollbar-thumb { background: var(--line-strong); border-radius: 2px; }
+
 .neck-outer { display: flex; flex-direction: column; align-items: flex-start; }
 .neck-row { display: flex; align-items: stretch; }
-
 .open-col {
   display: flex; flex-direction: column;
-  background: #1a1208; border: 2px solid #3a2510; border-right: none; border-radius: 8px 0 0 8px;
+  background: var(--surface-2); border: 1px solid var(--line-strong); border-right: none;
+  border-radius: 8px 0 0 8px;
 }
-.open-col.right-side {
-  border-right: 2px solid #3a2510; border-left: none;
-  border-radius: 0 8px 8px 0;
-}
-.open-cell {
-  display: flex; align-items: center; justify-content: center;
-  cursor: pointer; transition: background .1s;
-}
-.open-cell:hover { background: rgba(255,255,255,.06); }
+.open-col.right-side { border-right: 1px solid var(--line-strong); border-left: none; border-radius: 0 8px 8px 0; }
+.open-cell { display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background .1s; }
+.open-cell:hover { background: rgba(255,255,255,.05); }
 
 .neck {
   position: relative;
   background:
-    repeating-linear-gradient(89deg, transparent 0px, transparent 30px, rgba(0,0,0,.035) 30px, rgba(0,0,0,.035) 34px),
-    linear-gradient(173deg, #5c2e10 0%, #8b5a2b 12%, #7a4020 28%, #9b6030 44%, #7a4020 58%, #8b5030 74%, #6b3a1f 88%, #5c2e10 100%);
-  border: 2px solid #3a1a08;
+    repeating-linear-gradient(90deg, transparent 0 22px, rgba(0,0,0,.05) 22px 23px),
+    linear-gradient(180deg, #3b2418 0%, #4a2d1d 50%, #3b2418 100%);
+  border: 1px solid #23150d;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.04), 0 10px 30px -12px rgba(0,0,0,.7);
 }
 .neck.main-mode { border-left: none; }
 .neck.pov-mode { border-right: none; }
-body.retro .neck {
-  background: #080020;
-  border-color: #4400aa;
-  box-shadow: inset 0 0 30px rgba(100,0,255,.15);
-}
-body.retro .open-cell:hover { background: rgba(100,0,255,.15); }
 
-.labels-col {
-  display: flex; flex-direction: column; padding-left: 14px; justify-content: space-around;
-}
-.labels-col.left-side { padding-left: 0; padding-right: 14px; }
-.string-label { display: flex; align-items: center; gap: 5px; white-space: nowrap; }
-.label-note { font-size: .82rem; font-weight: 600; color: #b09070; }
-.label-desc { font-size: .68rem; color: #5a4a30; }
+.labels-col { display: flex; flex-direction: column; padding-left: 16px; justify-content: space-around; }
+.labels-col.left-side { padding-left: 0; padding-right: 16px; align-items: flex-end; }
+.string-label { display: flex; align-items: center; gap: 6px; white-space: nowrap; }
+.label-note { font-size: .85rem; font-weight: 600; color: var(--text); font-variant-numeric: tabular-nums; min-width: 22px; }
+.label-desc { font-size: .75rem; color: var(--faint); }
 .course-badge {
-  font-size: .58rem; background: #2a1a08; color: #b09060;
-  border: 1px solid #4a3020; border-radius: 3px; padding: 1px 4px;
+  font-size: .65rem; font-weight: 500; color: var(--accent);
+  background: var(--accent-soft); border-radius: 4px; padding: 1px 6px;
 }
+.fret-nums-row { display: flex; margin-top: 8px; }
+.fret-num { text-align: center; font-size: .7rem; color: var(--faint); font-variant-numeric: tabular-nums; }
 
-.fret-nums-row { display: flex; margin-top: 6px; }
-.fret-num { text-align: center; font-size: .62rem; color: #4a3a22; }
+/* ===== RESULT ===== */
+.result-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 16px; align-items: start; }
+.chord-card { display: flex; flex-direction: column; gap: 20px; }
+.chord-display-label, .torrente-label, .prompt-area-label, .seq-label {
+  font-size: .8rem; font-weight: 600; color: var(--muted);
+}
+.chord-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.chord-name {
+  font-family: var(--serif); font-size: 3.25rem; font-weight: 500; line-height: 1.05;
+  letter-spacing: -.02em; color: var(--text); min-height: 3.4rem; margin-top: 4px;
+}
+.chord-notes { font-size: .88rem; color: var(--muted); margin-top: 4px; min-height: 1.3rem; }
 
-/* ===== VOICING NAVIGATOR ===== */
-.voicing-nav { margin-top: 18px; text-align: center; }
-.voicing-nav-header { display: flex; align-items: center; justify-content: center; gap: 16px; margin-bottom: 10px; }
-.voicing-arrow { background: #1e2808; color: #a8d060; border: 1px solid #4a7020; border-radius: 50%; width: 36px; height: 36px; font-size: 1.1rem; cursor: pointer; transition: background .15s; display: flex; align-items: center; justify-content: center; }
-.voicing-arrow:hover { background: #2a3a10; }
-.voicing-label { font-size: .78rem; color: #7a6a50; text-transform: uppercase; letter-spacing: .08em; }
-.voicing-thumbs { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
-.voicing-thumb { cursor: pointer; border: 2px solid #3a2a10; border-radius: 6px; transition: border-color .15s, transform .15s; background: #1a1206; }
-.voicing-thumb:hover { border-color: #a8d060; transform: scale(1.05); }
-.voicing-thumb.active { border-color: #f0e060; box-shadow: 0 0 10px rgba(240,224,96,.3); }
+.voicing-nav { border-top: 1px solid var(--line); padding-top: 16px; }
+.voicing-nav-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.voicing-label { font-size: .8rem; font-weight: 600; color: var(--muted); margin-right: auto; order: -1; }
+.voicing-arrow {
+  background: var(--surface-2); color: var(--text); border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm); width: 30px; height: 30px; font-size: .95rem; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; transition: background .15s;
+}
+.voicing-arrow:hover { background: var(--surface-3); }
+.voicing-thumbs { display: flex; gap: 8px; flex-wrap: wrap; }
+.voicing-thumb {
+  cursor: pointer; border: 1px solid var(--line-strong); border-radius: 6px;
+  background: var(--surface-2); transition: border-color .15s;
+}
+.voicing-thumb:hover { border-color: var(--muted); }
+.voicing-thumb.active { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
 
-/* ===== CHORD DISPLAY ===== */
-.chord-display { margin-top: 24px; text-align: center; }
-.chord-display-label { font-size: .66rem; color: #5a4a30; text-transform: uppercase; letter-spacing: .1em; margin-bottom: 6px; }
-.chord-name { font-size: 2.2rem; font-weight: 700; color: #f0e060; min-height: 2.8rem; text-shadow: 0 0 24px rgba(240,224,96,.25); transition: color .2s; }
-.chord-notes { font-size: .8rem; color: #7a6a50; margin-top: 4px; min-height: 1.2rem; }
-
-/* ===== TORRENTE ===== */
-.torrente-display { margin-top: 20px; text-align: center; }
-.torrente-label { font-size: .63rem; color: #5a4a30; text-transform: uppercase; letter-spacing: .1em; margin-bottom: 10px; }
-.torrente-chords { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+.torrente-display { border-top: 1px solid var(--line); padding-top: 16px; }
+.torrente-label { margin-bottom: 10px; }
+.torrente-chords { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
 .torrente-chord {
-  background: #141008; border: 1px solid #3a2a12; border-radius: 10px;
-  padding: 10px 16px; min-width: 86px; cursor: pointer;
-  transition: background .15s, border-color .15s;
+  background: var(--surface-2); border: 1px solid var(--line-strong); border-radius: var(--radius-sm);
+  padding: 10px 12px; cursor: pointer; transition: background .15s, border-color .15s;
 }
-.torrente-chord:hover { background: #2a1e0c; border-color: #6a4a20; }
-.torrente-chord.tonic { border-color: #7a6030; cursor: default; }
-.torrente-role { font-size: .58rem; color: #5a4a30; text-transform: uppercase; letter-spacing: .07em; margin-bottom: 4px; }
-.torrente-name { font-size: 1.15rem; font-weight: 700; color: #d0c080; }
-.torrente-chord.tonic .torrente-name { color: #f0e060; }
+.torrente-chord:hover { background: var(--surface-3); border-color: #51483c; }
+.torrente-chord.tonic { border-color: var(--accent); background: var(--accent-soft); cursor: default; }
+.torrente-role { font-size: .7rem; color: var(--faint); margin-bottom: 2px; }
+.torrente-name { font-family: var(--serif); font-size: 1.3rem; font-weight: 500; color: var(--text); }
+.torrente-chord.tonic .torrente-name { color: var(--accent); }
 
-/* ===== PROMPT ===== */
-.prompt-area {
-  margin-top: 20px; width: 100%; max-width: 740px;
-  background: #1e1408; border: 1px solid #3a2a12; border-radius: 10px; padding: 14px 16px;
-}
-.prompt-area-label { font-size: .62rem; color: #5a4a30; text-transform: uppercase; letter-spacing: .1em; margin-bottom: 8px; }
-.prompt-text { font-family: 'SF Mono','Fira Code',Menlo,monospace; font-size: .8rem; color: #c0b090; line-height: 1.6; min-height: 1.4rem; }
-.export-btn {
-  margin-top: 14px; font-size: .75rem; padding: 7px 16px;
-  background: #2a1e0c; border: 1px solid #5a4530; border-radius: 8px;
-  color: #c0a070; cursor: pointer; transition: background .15s;
-}
-.export-btn:hover { background: #3a2e1c; }
-
-/* ===== MOBILE SCROLL WRAPPER ===== */
-.fretboard-scroll {
-  overflow-x: auto;
-  overflow-y: visible;
-  max-width: 100vw;
-  -webkit-overflow-scrolling: touch;
-  padding-bottom: 4px;
-}
-.fretboard-scroll::-webkit-scrollbar { height: 4px; }
-.fretboard-scroll::-webkit-scrollbar-track { background: transparent; }
-.fretboard-scroll::-webkit-scrollbar-thumb { background: #3a2a12; border-radius: 2px; }
-
-/* ===== LISTEN MODE ===== */
-.listen-row {
-  display: flex; align-items: center; gap: 12px; margin-bottom: 10px;
-  flex-wrap: wrap; justify-content: center;
-}
-.listen-label {
-  font-size: .72rem; color: #7a6a50; text-transform: uppercase; letter-spacing: .06em;
-}
-
-/* iOS-style toggle switch */
-.toggle-wrap { display: flex; align-items: center; gap: 8px; cursor: pointer; user-select: none; }
-.toggle-switch {
-  position: relative; width: 44px; height: 26px; flex-shrink: 0;
-}
-.toggle-switch input { opacity: 0; width: 0; height: 0; position: absolute; }
-.toggle-track {
-  position: absolute; inset: 0; border-radius: 13px;
-  background: #2a1e0c; border: 1px solid #4a3820;
-  transition: background .2s, border-color .2s;
-}
-.toggle-switch input:checked ~ .toggle-track {
-  background: #4a9a5a; border-color: #5ab86a;
-}
-.toggle-thumb {
-  position: absolute; top: 3px; left: 3px;
-  width: 20px; height: 20px; border-radius: 50%;
-  background: #c0b090; box-shadow: 0 1px 3px rgba(0,0,0,.4);
-  transition: transform .2s, background .2s;
-}
-.toggle-switch input:checked ~ .toggle-track .toggle-thumb {
-  transform: translateX(18px); background: #fff;
-}
-.toggle-text { font-size: .82rem; color: #c0a070; }
-.toggle-wrap.on .toggle-text { color: #7ada8a; }
-
-.play-chord-btn {
-  background: linear-gradient(135deg, #4a3a18, #2e2008);
-  color: #f0e0a0; border: 1px solid #8a6a30;
-  border-radius: 10px; padding: 9px 22px;
-  font-size: .92rem; font-weight: 600; cursor: pointer;
-  transition: background .15s, opacity .15s, transform .08s;
-  letter-spacing: .02em; display: none;
-}
-.play-chord-btn:hover { background: linear-gradient(135deg, #5a4a28, #3e3018); }
-.play-chord-btn:active { transform: scale(.97); }
-.play-chord-btn.visible { display: inline-flex; align-items: center; gap: 7px; }
-
-/* ===== CUSTOM CHORDS ROW ===== */
-.custom-row {
-  display: flex; gap: 8px; align-items: center; margin-bottom: 8px;
-  flex-wrap: wrap; justify-content: center;
-}
-.save-name-wrap {
-  display: none; gap: 6px; align-items: center; flex-wrap: wrap; justify-content: center;
-}
-.save-name-wrap.visible { display: flex; }
-.save-name-input {
-  background: #231a0c; color: #e0d5c0; border: 1px solid #5a4530; border-radius: 8px;
-  padding: 7px 12px; font-size: .85rem; outline: none; width: 160px;
-}
-.save-name-input:focus { border-color: #c8a060; }
-.btn-accent {
-  background: #3a2808; color: #f0e0a0; border: 1px solid #c8a060;
-  border-radius: 8px; padding: 8px 14px; font-size: .88rem; cursor: pointer; transition: background .15s;
-}
-.btn-accent:hover { background: #4a3818; }
-.btn-danger {
-  background: #2a0c0c; color: #f08080; border: 1px solid #7a3030;
-  border-radius: 8px; padding: 8px 14px; font-size: .88rem; cursor: pointer; transition: background .15s;
-}
-.btn-danger:hover { background: #3a1818; }
+.prompt-area { display: flex; flex-direction: column; gap: 10px; }
+.prompt-text { font-size: .9rem; color: var(--text); line-height: 1.6; min-height: 1.4rem; flex: 1; }
+.prompt-actions { display: flex; gap: 8px; flex-wrap: wrap; }
 
 /* ===== TUNER ===== */
 .tuner-panel {
-  width: 100%; max-width: 420px;
-  background: #1e1408; border: 1px solid #3a2a12; border-radius: 14px;
-  padding: 22px 20px 18px; margin-bottom: 16px; text-align: center;
-  display: none;
+  display: none; text-align: center;
+  padding: 22px 20px 20px; border-bottom: 1px solid var(--line); background: var(--surface-2);
 }
 .tuner-panel.visible { display: block; }
-.tuner-note-row {
-  display: flex; align-items: baseline; justify-content: center; gap: 8px;
-  margin-bottom: 4px;
-}
-.tuner-note { font-size: 4rem; font-weight: 700; color: #f0e060; line-height: 1; min-width: 60px; }
-.tuner-octave { font-size: 1.4rem; color: #7a6a50; }
-.tuner-cents-label {
-  font-size: .78rem; color: #7a6a50; letter-spacing: .06em; margin-bottom: 14px;
-  min-height: 1.2em;
-}
-.tuner-meter-wrap { margin: 0 auto 10px; width: 260px; }
+.tuner-status { font-size: .78rem; color: var(--faint); margin-bottom: 8px; min-height: 1.1em; }
+.tuner-note-row { display: flex; align-items: baseline; justify-content: center; gap: 6px; margin-bottom: 2px; }
+.tuner-note { font-family: var(--serif); font-size: 3.5rem; font-weight: 500; color: var(--text); line-height: 1; min-width: 60px; }
+.tuner-octave { font-size: 1.2rem; color: var(--faint); }
+.tuner-cents-label { font-size: .82rem; color: var(--muted); margin-bottom: 14px; min-height: 1.2em; font-variant-numeric: tabular-nums; }
+.tuner-meter-wrap { margin: 0 auto 8px; width: 280px; max-width: 100%; }
 .tuner-meter {
-  position: relative; height: 10px; border-radius: 5px; overflow: visible;
-  background: linear-gradient(to right, #b03020 0%, #c87830 30%, #3a8a40 45%, #3a8a40 55%, #c87830 70%, #b03020 100%);
+  position: relative; height: 6px; border-radius: 3px;
+  background: linear-gradient(to right, #6b3328 0%, #7a5a2c 32%, #3f6a3c 45%, #3f6a3c 55%, #7a5a2c 68%, #6b3328 100%);
 }
 .tuner-needle {
-  position: absolute; top: -7px; left: 50%;
-  width: 3px; height: 24px; background: #f0f0e0;
-  border-radius: 2px; transform: translateX(-50%);
-  transition: left .08s ease-out;
-  box-shadow: 0 0 6px rgba(255,255,255,.4);
+  position: absolute; top: -8px; left: 50%; width: 2px; height: 22px; background: var(--text);
+  border-radius: 1px; transform: translateX(-50%); transition: left .08s ease-out;
 }
-.tuner-needle.in-tune { background: #60f070; box-shadow: 0 0 10px rgba(80,240,90,.5); }
-.tuner-meter-ticks {
-  display: flex; justify-content: space-between;
-  padding: 4px 0 0;
-  font-size: .58rem; color: #4a3a22; letter-spacing: .04em;
+.tuner-needle.in-tune { background: var(--ok); }
+.tuner-meter-ticks { display: flex; justify-content: space-between; padding-top: 6px; font-size: .68rem; color: var(--faint); font-variant-numeric: tabular-nums; }
+.tuner-string-hint { font-size: .82rem; color: var(--muted); margin-top: 8px; min-height: 1.2em; }
+.tuner-controls { display: flex; justify-content: center; margin-top: 14px; }
+.tuner-mic-btn.active { color: var(--danger); border-color: rgba(208,112,90,.5); }
+
+/* ===== CHORD SEQUENCE ===== */
+.seq-section .panel-title { margin-bottom: 14px; }
+.seq-controls { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.seq-thumbs {
+  display: flex; gap: 14px; flex-wrap: wrap; min-height: 92px; padding: 14px;
+  background: var(--surface-2); border: 1px dashed var(--line-strong); border-radius: var(--radius-sm);
 }
-.tuner-string-hint {
-  font-size: .78rem; color: #b09060; margin-top: 8px; min-height: 1.2em;
+.seq-thumbs:empty { align-items: center; justify-content: center; }
+.seq-thumbs:empty::after { content: attr(data-empty); color: var(--faint); font-size: .82rem; }
+.seq-chord { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.seq-chord-name { font-size: .78rem; font-weight: 500; color: var(--text); max-width: 84px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.seq-chord-num { font-size: .68rem; color: var(--faint); font-variant-numeric: tabular-nums; }
+.seq-chord-actions { display: flex; gap: 2px; }
+.seq-arrow, .seq-remove {
+  background: transparent; color: var(--faint); border: 1px solid transparent; border-radius: 6px;
+  width: 24px; height: 22px; font-size: .75rem; cursor: pointer; padding: 0;
+  display: flex; align-items: center; justify-content: center; transition: background .15s, color .15s;
 }
-.tuner-controls { display: flex; gap: 10px; justify-content: center; margin-top: 14px; }
-.tuner-mic-btn {
-  background: #2a1e0c; color: #c0a070; border: 1px solid #5a4020;
-  border-radius: 8px; padding: 8px 20px; font-size: .85rem; cursor: pointer;
-  transition: background .15s;
+.seq-arrow:hover { background: var(--surface-3); color: var(--text); }
+.seq-remove:hover { background: rgba(208,112,90,.12); color: var(--danger); }
+.seq-save-row { display: flex; gap: 8px; align-items: center; margin-top: 14px; flex-wrap: wrap; }
+.seq-save-row select { width: auto; min-width: 200px; flex: 0 1 260px; }
+#seqSaveNameWrap { margin-top: 10px; }
+
+/* ===== FOOTER ===== */
+.site-footer {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+  padding: 20px 0 8px; margin-top: 8px; border-top: 1px solid var(--line);
+  font-size: .78rem; color: var(--faint);
 }
-.tuner-mic-btn:hover { background: #3a2e1c; }
-.tuner-mic-btn.active { background: #3a1010; color: #f08080; border-color: #8a3030; }
-.tuner-status { font-size: .7rem; color: #4a3a22; letter-spacing: .06em; margin-bottom: 8px; min-height: 1.1em; }
+.retro-toggle-row .toggle-text { font-size: .78rem; }
+
+/* ===== TOAST ===== */
+.toast {
+  position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(16px);
+  background: var(--text); color: var(--bg); border-radius: var(--radius-sm);
+  padding: 10px 16px; font-size: .85rem; font-weight: 500;
+  box-shadow: 0 10px 30px rgba(0,0,0,.4);
+  opacity: 0; transition: opacity .25s, transform .25s; pointer-events: none; z-index: 9999;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
 /* ===== PASSWORD GATE ===== */
 #gate-overlay {
-  position: fixed; inset: 0; z-index: 9999;
-  background: #1a1510;
+  position: fixed; inset: 0; z-index: 9999; background: var(--bg);
   display: flex; align-items: center; justify-content: center;
-  flex-direction: column; gap: 0;
 }
 #gate-overlay.hidden { display: none; }
 .gate-box {
-  text-align: center; width: 90%; max-width: 340px;
+  width: 90%; max-width: 360px; padding: 32px 28px;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 16px;
 }
-.gate-title {
-  font-size: 2.4rem; font-weight: 700; color: #f0e0a0;
-  letter-spacing: .02em; margin-bottom: 6px; line-height: 1;
-}
-.gate-sub {
-  font-size: .7rem; color: #5a4a30; text-transform: uppercase;
-  letter-spacing: .14em; margin-bottom: 44px;
-}
+.gate-title { font-family: var(--serif); font-size: 2rem; font-weight: 500; letter-spacing: -.01em; color: var(--text); line-height: 1.1; }
+.gate-sub { font-size: .85rem; color: var(--muted); margin: 6px 0 24px; }
 .gate-input {
-  width: 100%; padding: 14px 18px;
-  background: #231a0c; color: #e0d5c0;
-  border: 1px solid #5a4530; border-radius: 10px;
-  font-size: 1rem; text-align: center; letter-spacing: 4px;
-  outline: none; margin-bottom: 10px;
+  width: 100%; padding: 11px 14px; margin-bottom: 10px;
+  background: var(--surface-2); color: var(--text);
+  border: 1px solid var(--line-strong); border-radius: var(--radius-sm);
+  font-size: .95rem; outline: none;
 }
-.gate-input::placeholder { letter-spacing: 2px; color: #4a3a22; font-size: .8rem; }
-.gate-input:focus { border-color: #c8a060; }
+.gate-input::placeholder { color: var(--faint); }
+.gate-input:focus { border-color: var(--accent); }
 .gate-submit {
-  width: 100%; padding: 13px; border-radius: 10px;
-  background: linear-gradient(135deg, #4a3a18, #2e2008);
-  color: #f0e0a0; border: 1px solid #8a6a30;
-  font-size: .95rem; font-weight: 600; letter-spacing: .04em; cursor: pointer;
-  transition: background .15s;
+  width: 100%; padding: 11px; border-radius: var(--radius-sm);
+  background: var(--accent); color: var(--accent-ink); border: 1px solid var(--accent);
+  font-size: .92rem; font-weight: 600; cursor: pointer; transition: background .15s;
 }
-.gate-submit:hover { background: linear-gradient(135deg, #5a4a28, #3e3018); }
-.gate-error {
-  font-size: .7rem; color: #c0392b; letter-spacing: 2px;
-  text-transform: uppercase; margin-top: 12px; min-height: 18px;
-}
+.gate-submit:hover { background: #e4b252; }
+.gate-error { font-size: .8rem; color: var(--danger); margin-top: 10px; min-height: 18px; }
 
 /* ===== RETRO MODE ===== */
-.retro-toggle-row {
-  margin-top: 28px; text-align: center;
-}
-
 body.retro {
-  background: #0a0018;
-  color: #e0e0ff;
+  --bg: #0a0018; --surface: #0f0028; --surface-2: #150034; --surface-3: #1f0048;
+  --line: #2a0060; --line-strong: #4400aa; --text: #e0e0ff; --muted: #aa88dd; --faint: #7755bb;
+  --accent: #ff00ff; --accent-soft: rgba(255,0,255,.15); --accent-ink: #0a0018;
+  background: var(--bg);
   font-family: 'Press Start 2P', 'Courier New', monospace;
-  font-size: .75rem;
+  font-size: 11px;
 }
 body.retro::before {
   content: ''; position: fixed; inset: 0; z-index: -1; pointer-events: none;
@@ -370,135 +387,51 @@ body.retro::before {
     linear-gradient(rgba(20,0,50,.92) 2px, transparent 2px),
     linear-gradient(90deg, rgba(20,0,50,.92) 2px, transparent 2px);
   background-size: 40px 40px;
-  background-position: center center;
   animation: retro-grid-scroll 4s linear infinite;
 }
-@keyframes retro-grid-scroll {
-  0% { background-position: 0 0; }
-  100% { background-position: 0 40px; }
+@keyframes retro-grid-scroll { 0% { background-position: 0 0; } 100% { background-position: 0 40px; } }
+body.retro .topbar { background: rgba(10,0,24,.9); }
+body.retro h1, body.retro .chord-name, body.retro .gate-title, body.retro .tuner-note {
+  font-family: 'Press Start 2P', monospace; color: #ff00ff; text-shadow: 0 0 10px #ff00ff, 0 0 30px #aa00aa;
 }
-body.retro h1 {
-  color: #ff00ff; text-shadow: 0 0 10px #ff00ff, 0 0 30px #ff00ff, 0 0 60px #aa00aa;
-  font-family: 'Press Start 2P', 'Courier New', monospace;
-  font-size: 1.3rem; line-height: 1.4;
-}
-body.retro .subtitle { color: #00ffff; text-shadow: 0 0 8px #00ffff; }
-body.retro .pill-toggle { background: #0f0028; border-color: #6600cc; }
-body.retro .pill-toggle button { color: #8866bb; font-size: .55rem; }
-body.retro .pill-toggle button.active { background: #3300aa; color: #ff00ff; text-shadow: 0 0 6px #ff00ff; }
-body.retro select {
-  background: #0f0028; border-color: #6600cc; color: #00ffff;
-  text-shadow: 0 0 4px #00ffff; font-family: 'Press Start 2P', monospace; font-size: .6rem;
-}
-body.retro .btn, body.retro .play-chord-btn, body.retro .btn-accent, body.retro .btn-danger {
-  background: #1a0040; border-color: #8800ff; color: #00ffff;
-  text-shadow: 0 0 4px #00ffff; font-family: 'Press Start 2P', monospace; font-size: .55rem;
-}
-body.retro .btn:hover, body.retro .play-chord-btn:hover { background: #2a0060; }
-body.retro .pov-toggle { background: #0f0028; border-color: #6600cc; }
-body.retro .pov-toggle .pov-toggle-label { color: #aa88dd; }
-body.retro .pov-toggle.active { background: #3300aa; border-color: #ff00ff; }
-body.retro .pov-toggle.active .pov-toggle-label { color: #ff00ff; text-shadow: 0 0 6px #ff00ff; }
-body.retro .mode-hint { color: #4422aa; }
-body.retro .ctrl-label { color: #8866bb; }
-body.retro .toggle-track { background: #1a0040; border-color: #6600cc; }
+body.retro h1 { font-size: 1rem; }
+body.retro .chord-name { font-size: 1.6rem; line-height: 1.5; }
+body.retro .chord-notes, body.retro .label-note, body.retro .torrente-name, body.retro .seq-chord-name { color: #00ffff; text-shadow: 0 0 4px #00ffff; }
+body.retro .torrente-name { font-family: 'Press Start 2P', monospace; font-size: .8rem; }
+body.retro .prompt-text { color: #00ff88; text-shadow: 0 0 3px #00ff88; font-size: .7rem; line-height: 2; }
+body.retro select, body.retro .btn, body.retro .export-btn, body.retro .seg button, body.retro .tuner-mic-btn { color: #00ffff; font-size: .62rem; }
+body.retro .btn-accent, body.retro .play-chord-btn, body.retro .gate-submit { font-size: .62rem; }
+body.retro .neck { background: #080020; border-color: #4400aa; box-shadow: inset 0 0 30px rgba(100,0,255,.15); }
+body.retro .open-cell:hover { background: rgba(100,0,255,.15); }
 body.retro .toggle-switch input:checked ~ .toggle-track { background: #00cc44; border-color: #00ff55; box-shadow: 0 0 8px #00ff55; }
-body.retro .toggle-thumb { background: #d0d0ff; }
-body.retro .toggle-text { color: #8866bb; }
-body.retro .toggle-wrap.on .toggle-text { color: #00ff55; text-shadow: 0 0 4px #00ff55; }
-body.retro .open-col { background: #0a0020; border-color: #4400aa; }
-body.retro .label-note { color: #00ffff; text-shadow: 0 0 4px #00ffff; font-family: 'Press Start 2P', monospace; font-size: .55rem; }
-body.retro .label-desc { color: #6644aa; }
-body.retro .course-badge { background: #0a0020; color: #aa88dd; border-color: #6600cc; }
-body.retro .fret-num { color: #6644aa; }
-body.retro .voicing-arrow { background: #1a0033; color: #00ffff; border-color: #00ffff; box-shadow: 0 0 6px #00ffff44; }
-body.retro .voicing-arrow:hover { background: #2a0055; }
-body.retro .voicing-label { color: #8866bb; text-shadow: 0 0 4px #8866bb; }
-body.retro .voicing-thumb { border-color: #330066; background: #0a0015; }
-body.retro .voicing-thumb:hover { border-color: #00ffff; }
-body.retro .voicing-thumb.active { border-color: #ff00ff; box-shadow: 0 0 10px rgba(255,0,255,.4); }
-body.retro .chord-display-label { color: #8866bb; }
-body.retro .chord-name { color: #ff00ff; text-shadow: 0 0 12px #ff00ff, 0 0 40px #aa00aa; font-family: 'Press Start 2P', monospace; font-size: 1.6rem; }
-body.retro .chord-notes { color: #00ffff; text-shadow: 0 0 4px #00ffff; }
-body.retro .torrente-label { color: #8866bb; }
-body.retro .torrente-chord { background: #0a0020; border-color: #4400aa; }
-body.retro .torrente-chord:hover { background: #1a0040; border-color: #8800ff; }
-body.retro .torrente-chord.tonic { border-color: #ff00ff; box-shadow: 0 0 8px rgba(255,0,255,.3); }
-body.retro .torrente-role { color: #8866bb; }
-body.retro .torrente-name { color: #00ffff; text-shadow: 0 0 6px #00ffff; font-family: 'Press Start 2P', monospace; font-size: .85rem; }
-body.retro .torrente-chord.tonic .torrente-name { color: #ff00ff; text-shadow: 0 0 8px #ff00ff; }
-body.retro .prompt-area { background: #0a0020; border-color: #4400aa; }
-body.retro .prompt-area-label { color: #8866bb; }
-body.retro .prompt-text { color: #00ff88; text-shadow: 0 0 3px #00ff88; font-family: 'Press Start 2P', monospace; font-size: .55rem; line-height: 2; }
-body.retro .export-btn { background: #1a0040; border-color: #8800ff; color: #00ffff; text-shadow: 0 0 4px #00ffff; font-family: 'Press Start 2P', monospace; font-size: .55rem; }
-body.retro .custom-row select { background: #0f0028; border-color: #6600cc; color: #00ffff; }
-body.retro .save-name-input { background: #0f0028; border-color: #6600cc; color: #00ffff; }
-body.retro .listen-row { border-color: #2a0060; }
-body.retro .tuner-panel { background: #0a0020; border-color: #4400aa; }
-body.retro .tuner-note { color: #ff00ff; text-shadow: 0 0 12px #ff00ff; }
-body.retro .tuner-cents-label { color: #00ffff; }
-body.retro .tuner-mic-btn { background: #1a0040; border-color: #6600cc; color: #00ffff; }
-body.retro .fretboard-scroll::-webkit-scrollbar-thumb { background: #6600cc; }
-body.retro #gate-overlay { background: #0a0018; }
-body.retro .gate-title { color: #ff00ff; text-shadow: 0 0 20px #ff00ff; }
-body.retro .gate-sub { color: #00ffff; }
-body.retro .gate-input { background: #0f0028; border-color: #6600cc; color: #00ffff; }
-body.retro .gate-submit { background: linear-gradient(135deg, #3300aa, #1a0060); color: #ff00ff; border-color: #8800ff; }
+body.retro .toast { background: #1a0040; color: #00ffff; border: 1px solid #6600cc; }
 
-/* ===== CHORD SEQUENCE ===== */
-.seq-section { margin-top: 20px; width: 100%; max-width: 740px; background: #1e1408; border: 1px solid #3a2a12; border-radius: 10px; padding: 14px 16px; }
-.seq-label { font-size: .62rem; color: #5a4a30; text-transform: uppercase; letter-spacing: .1em; margin-bottom: 8px; text-align: center; }
-.seq-controls { display: flex; gap: 8px; align-items: center; justify-content: center; margin-bottom: 10px; flex-wrap: wrap; }
-.seq-save-row { display: flex; gap: 8px; align-items: center; justify-content: center; margin-top: 12px; flex-wrap: wrap; }
-.seq-thumbs { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; min-height: 40px; padding: 6px 0; }
-.seq-thumbs:empty::after { content: attr(data-empty); color: #5a4a30; font-size: .72rem; font-style: italic; }
-.seq-chord { display: flex; flex-direction: column; align-items: center; gap: 3px; position: relative; }
-.seq-chord-name { font-size: .68rem; color: #b09070; text-align: center; max-width: 80px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.seq-chord-num { font-size: .58rem; color: #5a4a30; }
-.seq-chord-actions { display: flex; gap: 3px; }
-.seq-arrow { background: #1e2808; color: #a8d060; border: 1px solid #4a7020; border-radius: 50%; width: 20px; height: 20px; font-size: .6rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background .15s; padding: 0; }
-.seq-arrow:hover { background: #2a3a10; }
-.seq-remove { background: #2a0c0c; color: #f08080; border: 1px solid #7a3030; border-radius: 50%; width: 20px; height: 20px; font-size: .65rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background .15s; padding: 0; }
-.seq-remove:hover { background: #3a1010; }
-
-body.retro .seq-section { background: #0a0020; border-color: #4400aa; }
-body.retro .seq-label { color: #8866bb; }
-body.retro .seq-thumbs:empty::after { color: #6644aa; }
-.seq-thumbs:empty { display: flex; align-items: center; justify-content: center; }
-body.retro .seq-chord-name { color: #00ffff; text-shadow: 0 0 4px #00ffff; }
-body.retro .seq-chord-num { color: #8866bb; }
-body.retro .seq-arrow { background: #1a0033; color: #00ffff; border-color: #00ffff; }
-body.retro .seq-arrow:hover { background: #2a0055; }
-body.retro .seq-remove { background: #2a0020; color: #ff0044; border-color: #ff0044; }
-body.retro .seq-remove:hover { background: #3a0030; }
-
-/* ===== TOAST ===== */
-.toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(20px); background: #2a3a10; color: #a8d060; border: 1px solid #4a7020; border-radius: 8px; padding: 10px 20px; font-size: .82rem; opacity: 0; transition: opacity .3s, transform .3s; pointer-events: none; z-index: 9999; }
-.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-body.retro .toast { background: #1a0040; color: #00ffff; border-color: #6600cc; text-shadow: 0 0 4px #00ffff; }
-
-/* ===== SAFE AREA (iPhone notch) ===== */
-body { padding-bottom: max(40px, env(safe-area-inset-bottom)); }
-
-@media (max-width: 500px) {
-  h1 { font-size: 1.4rem; }
-  body { padding: 20px 10px max(32px, env(safe-area-inset-bottom)); }
-  select { min-width: 120px; font-size: .85rem; }
-  .subtitle { font-size: .65rem; letter-spacing: .07em; }
-  .sub-br { display: block; }
-  .sub-sep { display: none; }
-  .voicing-thumbs, .seq-thumbs { gap: 8px; }
+/* ===== RESPONSIVE ===== */
+@media (max-width: 860px) {
+  .toolbar { grid-template-columns: 1fr 1fr; }
+  .toolbar .field-view { grid-column: 1 / -1; }
+  .result-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 600px) {
+  .topbar { padding: 12px 16px; flex-wrap: wrap; }
+  .subtitle { display: none; }
+  .app { padding: 16px 16px 0; gap: 12px; }
+  .panel { padding: 16px; }
+  .toolbar { grid-template-columns: 1fr; }
+  .stage-head { padding: 12px 16px; }
+  .stage-body { padding: 20px 12px 12px; }
+  .listen-row { gap: 14px; }
+  .chord-name { font-size: 2.6rem; }
+  .torrente-chord { padding: 8px 10px; }
+  .torrente-name { font-size: 1.1rem; }
   .voicing-thumb, .seq-chord canvas { width: 64px !important; height: 48px !important; }
-  .seq-chord-name { font-size: .6rem; max-width: 64px; }
-  .seq-section { padding: 10px 10px; }
-  .seq-controls { gap: 6px; }
-  .torrente-chords { gap: 6px; }
-  .torrente-chord { padding: 8px 10px; min-width: 80px; }
+  .seq-chord-name { max-width: 64px; }
+  .seq-save-row select { flex: 1 1 100%; }
 }
 </style>
 </head>
 <body>
-<div class="toast" id="toast"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <!-- Password Gate -->
 <div id="gate-overlay">
@@ -532,167 +465,208 @@ function gateSubmit() {
 try { if (sessionStorage.getItem('mejoranaAuth') === 'true') gateUnlock(); } catch(e){}
 </script>
 
-<h1>Mejorana Chord Visualizer</h1>
-<p class="subtitle">Panamanian Folkloric Instrument</p>
-
-<div class="settings-row">
-  <div class="pill-toggle">
-    <button id="langEN" class="active" onclick="setLang('en')">EN</button>
-    <button id="langES" onclick="setLang('es')">ES</button>
+<header class="topbar">
+  <div class="brand">
+    <h1>Mejorana</h1>
+    <p class="subtitle" id="subtitleText">Chord visualizer for the Panamanian mejorana</p>
   </div>
-  <div class="pill-toggle">
-    <button id="notationABC" class="active" onclick="setNotation('abc')">A B C</button>
-    <button id="notationSOL" onclick="setNotation('sol')">Do Re Mi</button>
-  </div>
-</div>
-
-<div class="controls">
-  <span class="ctrl-label" id="chordLabel">Chord:</span>
-  <select id="chordSel" onchange="onChordSelect(this.value)">
-    <option value="">— Select or click frets —</option>
-    <optgroup id="grpMaj" label="Major"></optgroup>
-    <optgroup id="grpMin" label="Minor"></optgroup>
-    <optgroup id="grpDom7" label="Dominant 7"></optgroup>
-    <optgroup id="grpMaj7" label="Major 7"></optgroup>
-    <optgroup id="grpMin7" label="Minor 7"></optgroup>
-  </select>
-  <div class="pov-toggle" id="povBtn" onclick="togglePOV()">
-    <span class="pov-toggle-label">POV</span>
-  </div>
-  <button class="btn" id="clearBtnEl" onclick="clearAll()">Clear</button>
-</div>
-
-<!-- Custom chords row -->
-<div class="custom-row">
-  <span class="ctrl-label" id="myChordLabel">My Chords:</span>
-  <select id="customSel" onchange="onCustomSelect(this.value)" style="min-width:160px;">
-    <option value="">— Saved chords —</option>
-  </select>
-  <button class="btn" onclick="showSaveInput()"><span id="saveBtnText">+ Save</span></button>
-  <button class="btn-danger" id="deleteCustomBtn" onclick="deleteCustomChord()" style="display:none;">Delete</button>
-</div>
-<div class="save-name-wrap" id="saveNameWrap">
-  <input class="save-name-input" type="text" id="saveNameInput" placeholder="Chord name…" maxlength="30">
-  <button class="btn-accent" onclick="confirmSaveChord()">Save</button>
-  <button class="btn" onclick="hideSaveInput()">Cancel</button>
-</div>
-
-<p class="mode-hint" id="modeHint">Looking down at instrument in your lap — headstock left, fret 1 on left &nbsp;·&nbsp; Click any fret or open string to build a chord</p>
-
-<!-- Controls row 2: toggles -->
-<div class="listen-row">
-  <label class="toggle-wrap" id="listenWrap">
-    <div class="toggle-switch">
-      <input type="checkbox" id="listenCheck" onchange="toggleListen()">
-      <div class="toggle-track"><div class="toggle-thumb"></div></div>
+  <div class="settings-row">
+    <div class="seg" role="group" aria-label="Language">
+      <button id="langEN" class="active" onclick="setLang('en')">EN</button>
+      <button id="langES" onclick="setLang('es')">ES</button>
     </div>
-    <span class="toggle-text" id="listenText">Listen</span>
-  </label>
-  <label class="toggle-wrap on" id="courseWrap">
-    <div class="toggle-switch">
-      <input type="checkbox" id="courseCheck" checked onchange="toggleCourse()">
-      <div class="toggle-track"><div class="toggle-thumb"></div></div>
-    </div>
-    <span class="toggle-text" id="courseText">Link A Strings</span>
-  </label>
-  <label class="toggle-wrap" id="noteLabelsWrap">
-    <div class="toggle-switch">
-      <input type="checkbox" id="noteLabelsCheck" onchange="toggleNoteLabels()">
-      <div class="toggle-track"><div class="toggle-thumb"></div></div>
-    </div>
-    <span class="toggle-text" id="noteLabelsText">Note Labels</span>
-  </label>
-  <button class="play-chord-btn" id="playChordBtn" onclick="playChord()">&#9654; Play Chord</button>
-  <button class="btn" id="tunerBtn" onclick="toggleTuner()"><span id="tunerBtnText">🎤 Tuner</span></button>
-</div>
-
-<!-- Tuner panel -->
-<div class="tuner-panel" id="tunerPanel">
-  <div class="tuner-status" id="tunerStatus">Tap the mic button to start</div>
-  <div class="tuner-note-row">
-    <div class="tuner-note" id="tunerNote">—</div>
-    <div class="tuner-octave" id="tunerOctave"></div>
-  </div>
-  <div class="tuner-cents-label" id="tunerCentsLabel"></div>
-  <div class="tuner-meter-wrap">
-    <div class="tuner-meter">
-      <div class="tuner-needle" id="tunerNeedle"></div>
-    </div>
-    <div class="tuner-meter-ticks">
-      <span>−50</span><span>−25</span><span>0</span><span>+25</span><span>+50</span>
+    <div class="seg" role="group" aria-label="Note names">
+      <button id="notationABC" class="active" onclick="setNotation('abc')">C D E</button>
+      <button id="notationSOL" onclick="setNotation('sol')">Do Re Mi</button>
     </div>
   </div>
-  <div class="tuner-string-hint" id="tunerStringHint"></div>
-  <div class="tuner-controls">
-    <button class="tuner-mic-btn" id="tunerMicBtn" onclick="toggleTunerMic()">🎤 Start Mic</button>
-  </div>
-</div>
+</header>
 
-<div class="fretboard-scroll">
-  <div id="fretboard-mount"></div>
-</div>
+<main class="app">
 
-<div class="voicing-nav" id="voicingNav" style="display:none;">
-  <div class="voicing-nav-header">
-    <button class="voicing-arrow" id="voicingPrev" onclick="prevVoicing()">&larr;</button>
-    <span class="voicing-label" id="voicingLabel">Voicing 1 of 3</span>
-    <button class="voicing-arrow" id="voicingNext" onclick="nextVoicing()">&rarr;</button>
-  </div>
-  <div class="voicing-thumbs" id="voicingThumbs"></div>
-</div>
-
-<div class="chord-display">
-  <div class="chord-display-label" id="detectedChordLabel">Detected Chord</div>
-  <div class="chord-name" id="chordName">—</div>
-  <div class="chord-notes" id="chordNotes"></div>
-</div>
-
-<div class="torrente-display" id="torrenteDisplay" style="display:none;">
-  <div class="torrente-label">Torrente — Complementary Chords</div>
-  <div class="torrente-chords" id="torrenteChords"></div>
-</div>
-
-<div class="prompt-area">
-  <div class="prompt-area-label" id="chordDescLabel">Chord Description</div>
-  <div class="prompt-text" id="promptOut">Select a chord or click frets to build one.</div>
-</div>
-
-<div style="margin-top:16px;text-align:center;">
-  <button class="export-btn" id="exportBtn" onclick="exportChordImage()">Export as Image</button>
-</div>
-
-<div class="seq-section" id="seqSection">
-  <div class="seq-label" id="seqSectionLabel">Chord Sequence</div>
-  <div class="seq-controls">
-    <button class="btn" id="seqAddBtn" onclick="seqAddChord()">+ Add to Sequence</button>
-    <button class="btn" onclick="seqClear()">Clear</button>
-    <button class="export-btn" id="seqExportBtn" onclick="exportSequenceImage()" style="display:none;">Export Sequence</button>
-  </div>
-  <div class="seq-thumbs" id="seqThumbs" data-empty="Select a chord and tap &quot;+ Add&quot; to build a sequence."></div>
-  <div class="seq-save-row">
-    <span class="ctrl-label" id="seqSelLabel">Sequences:</span>
-    <select id="seqSel" onchange="onSeqSelect(this.value)" style="min-width:160px;">
-      <option value="">— Saved sequences —</option>
-    </select>
-    <button class="btn" onclick="showSeqSaveInput()">+ Save</button>
-    <button class="btn-danger" id="deleteSeqBtn" onclick="deleteSeq()" style="display:none;">Delete</button>
-  </div>
-  <div class="save-name-wrap" id="seqSaveNameWrap">
-    <input class="save-name-input" type="text" id="seqSaveNameInput" placeholder="Sequence name…" maxlength="40">
-    <button class="btn-accent" onclick="confirmSaveSeq()">Save</button>
-    <button class="btn" onclick="hideSeqSaveInput()">Cancel</button>
-  </div>
-</div>
-
-<div class="retro-toggle-row">
-  <label class="toggle-wrap" id="retroWrap">
-    <div class="toggle-switch">
-      <input type="checkbox" id="retroCheck" onchange="toggleRetro()">
-      <div class="toggle-track"><div class="toggle-thumb"></div></div>
+  <!-- Chord selection -->
+  <section class="panel toolbar">
+    <div class="field">
+      <label class="ctrl-label" id="chordLabel" for="chordSel">Chord</label>
+      <select id="chordSel" onchange="onChordSelect(this.value)">
+        <option value="">— Select or click frets —</option>
+        <optgroup id="grpMaj" label="Major"></optgroup>
+        <optgroup id="grpMin" label="Minor"></optgroup>
+        <optgroup id="grpDom7" label="Dominant 7"></optgroup>
+        <optgroup id="grpMaj7" label="Major 7"></optgroup>
+        <optgroup id="grpMin7" label="Minor 7"></optgroup>
+      </select>
     </div>
-    <span class="toggle-text" id="retroText">Retro Mode</span>
-  </label>
-</div>
+    <div class="field">
+      <label class="ctrl-label" id="myChordLabel" for="customSel">My chords</label>
+      <div class="field-row">
+        <select id="customSel" onchange="onCustomSelect(this.value)">
+          <option value="">— Saved chords —</option>
+        </select>
+        <button class="btn" onclick="showSaveInput()"><span id="saveBtnText">Save</span></button>
+        <button class="btn-danger" id="deleteCustomBtn" onclick="deleteCustomChord()" style="display:none;">Delete</button>
+      </div>
+    </div>
+    <div class="field field-view">
+      <span class="ctrl-label" id="viewLabel">View</span>
+      <div class="seg" id="povBtn" role="group" aria-label="View">
+        <button id="viewLap" class="active" onclick="setPOV(false)">Lap</button>
+        <button id="viewPlayer" onclick="setPOV(true)">Player</button>
+      </div>
+    </div>
+    <div class="save-name-wrap" id="saveNameWrap">
+      <input class="save-name-input" type="text" id="saveNameInput" placeholder="Chord name…" maxlength="30"
+        onkeydown="if(event.key==='Enter')confirmSaveChord();if(event.key==='Escape')hideSaveInput()">
+      <button class="btn-accent" onclick="confirmSaveChord()" id="saveConfirmBtn">Save</button>
+      <button class="btn btn-ghost" onclick="hideSaveInput()" id="saveCancelBtn">Cancel</button>
+    </div>
+  </section>
+
+  <!-- Fretboard -->
+  <section class="panel stage">
+    <div class="stage-head">
+      <div class="listen-row">
+        <label class="toggle-wrap" id="listenWrap">
+          <span class="toggle-switch">
+            <input type="checkbox" id="listenCheck" onchange="toggleListen()">
+            <span class="toggle-track"><span class="toggle-thumb"></span></span>
+          </span>
+          <span class="toggle-text" id="listenText">Sound</span>
+        </label>
+        <label class="toggle-wrap on" id="courseWrap">
+          <span class="toggle-switch">
+            <input type="checkbox" id="courseCheck" checked onchange="toggleCourse()">
+            <span class="toggle-track"><span class="toggle-thumb"></span></span>
+          </span>
+          <span class="toggle-text" id="courseText">Link A strings</span>
+        </label>
+        <label class="toggle-wrap" id="noteLabelsWrap">
+          <span class="toggle-switch">
+            <input type="checkbox" id="noteLabelsCheck" onchange="toggleNoteLabels()">
+            <span class="toggle-track"><span class="toggle-thumb"></span></span>
+          </span>
+          <span class="toggle-text" id="noteLabelsText">Note names</span>
+        </label>
+      </div>
+      <div class="stage-actions">
+        <button class="play-chord-btn" id="playChordBtn" onclick="playChord()">
+          <svg class="icon" viewBox="0 0 24 24" style="fill:currentColor;stroke:none"><path d="M7 5v14l12-7z"/></svg>
+          <span id="playChordText">Play</span>
+        </button>
+        <button class="btn" id="tunerBtn" onclick="toggleTuner()">
+          <svg class="icon" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>
+          <span id="tunerBtnText">Tuner</span>
+        </button>
+        <button class="btn btn-ghost" id="clearBtnEl" onclick="clearAll()">Clear</button>
+      </div>
+    </div>
+
+    <div class="tuner-panel" id="tunerPanel">
+      <div class="tuner-status" id="tunerStatus">Tap the mic button to start</div>
+      <div class="tuner-note-row">
+        <div class="tuner-note" id="tunerNote">—</div>
+        <div class="tuner-octave" id="tunerOctave"></div>
+      </div>
+      <div class="tuner-cents-label" id="tunerCentsLabel"></div>
+      <div class="tuner-meter-wrap">
+        <div class="tuner-meter"><div class="tuner-needle" id="tunerNeedle"></div></div>
+        <div class="tuner-meter-ticks"><span>−50</span><span>−25</span><span>0</span><span>+25</span><span>+50</span></div>
+      </div>
+      <div class="tuner-string-hint" id="tunerStringHint"></div>
+      <div class="tuner-controls">
+        <button class="tuner-mic-btn" id="tunerMicBtn" onclick="toggleTunerMic()">Start mic</button>
+      </div>
+    </div>
+
+    <div class="stage-body">
+      <div class="fretboard-scroll">
+        <div id="fretboard-mount"></div>
+      </div>
+    </div>
+    <p class="mode-hint" id="modeHint"></p>
+  </section>
+
+  <!-- Result -->
+  <section class="result-grid">
+    <div class="panel chord-card">
+      <div class="chord-display">
+        <div class="chord-display-label" id="detectedChordLabel">Chord</div>
+        <div class="chord-name" id="chordName">—</div>
+        <div class="chord-notes" id="chordNotes"></div>
+      </div>
+
+      <div class="voicing-nav" id="voicingNav" style="display:none;">
+        <div class="voicing-nav-header">
+          <button class="voicing-arrow" id="voicingPrev" onclick="prevVoicing()" aria-label="Previous voicing">&larr;</button>
+          <span class="voicing-label" id="voicingLabel">Voicing 1 of 3</span>
+          <button class="voicing-arrow" id="voicingNext" onclick="nextVoicing()" aria-label="Next voicing">&rarr;</button>
+        </div>
+        <div class="voicing-thumbs" id="voicingThumbs"></div>
+      </div>
+
+      <div class="torrente-display" id="torrenteDisplay" style="display:none;">
+        <div class="torrente-label">Torrente — Complementary Chords</div>
+        <div class="torrente-chords" id="torrenteChords"></div>
+      </div>
+    </div>
+
+    <div class="panel prompt-area">
+      <div class="prompt-area-label" id="chordDescLabel">Fingering</div>
+      <div class="prompt-text" id="promptOut">Select a chord or click frets to build one.</div>
+      <div class="prompt-actions">
+        <button class="export-btn" onclick="exportChordImage()">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>
+          <span id="exportBtn">Export image</span>
+        </button>
+        <button class="btn" onclick="seqAddChord()">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+          <span id="seqAddBtn">Add to sequence</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sequence -->
+  <section class="panel seq-section" id="seqSection">
+    <div class="panel-title">
+      <span class="seq-label" id="seqSectionLabel">Chord sequence</span>
+      <div class="seq-controls">
+        <button class="export-btn" id="seqExportBtnWrap" onclick="exportSequenceImage()" style="display:none;">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>
+          <span id="seqExportBtn">Export sequence</span>
+        </button>
+        <button class="btn btn-ghost" id="seqClearBtn" onclick="seqClear()">Clear</button>
+      </div>
+    </div>
+    <div class="seq-thumbs" id="seqThumbs" data-empty="Pick a chord, then choose “Add to sequence”."></div>
+    <div class="seq-save-row">
+      <select id="seqSel" onchange="onSeqSelect(this.value)" aria-label="Saved sequences">
+        <option value="">— Saved sequences —</option>
+      </select>
+      <button class="btn" onclick="showSeqSaveInput()"><span id="seqSaveBtnText">Save sequence</span></button>
+      <button class="btn-danger" id="deleteSeqBtn" onclick="deleteSeq()" style="display:none;">Delete</button>
+    </div>
+    <div class="save-name-wrap" id="seqSaveNameWrap">
+      <input class="save-name-input" type="text" id="seqSaveNameInput" placeholder="Sequence name…" maxlength="40"
+        onkeydown="if(event.key==='Enter')confirmSaveSeq();if(event.key==='Escape')hideSeqSaveInput()">
+      <button class="btn-accent" onclick="confirmSaveSeq()" id="seqConfirmBtn">Save</button>
+      <button class="btn btn-ghost" onclick="hideSeqSaveInput()" id="seqCancelBtn">Cancel</button>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <span>Mejorana · <a href="https://striblingfilm.com" style="color:inherit">striblingfilm.com</a></span>
+    <div class="retro-toggle-row">
+      <label class="toggle-wrap" id="retroWrap">
+        <span class="toggle-switch">
+          <input type="checkbox" id="retroCheck" onchange="toggleRetro()">
+          <span class="toggle-track"><span class="toggle-thumb"></span></span>
+        </span>
+        <span class="toggle-text" id="retroText">Retro mode</span>
+      </label>
+    </div>
+  </footer>
+</main>
 
 <script>
 'use strict';
@@ -700,68 +674,72 @@ try { if (sessionStorage.getItem('mejoranaAuth') === 'true') gateUnlock(); } cat
 // ── LANGUAGE & NOTATION ────────────────────────────────────────────────────
 const LANG = {
   en: {
-    chordLabel: 'Chord:', myChords: 'My Chords:', savePlaceholder: 'Chord name…',
-    saveBtn: '+ Save', deleteBtn: 'Delete', clearBtn: 'Clear', playBtn: '▶ Play Chord',
-    listenLabel: 'Listen', linkLabel: 'Link A Strings', tunerBtn: '🎤 Tuner',
-    povLabel: 'POV', povActive: 'POV ✓',
-    hintMain: 'Looking down in your lap — headstock left, fret 1 on left — showing selected chord',
-    hintMainManual: 'Looking down in your lap — headstock left, fret 1 on left — manual mode',
-    hintPOV: 'POV Mode — fret 1 on right, D at top — showing selected chord',
-    hintPOVManual: 'POV Mode — fret 1 on right, D at top — manual mode',
+    chordLabel: 'Chord', myChords: 'My chords', savePlaceholder: 'Chord name…',
+    saveBtn: 'Save', deleteBtn: 'Delete', clearBtn: 'Clear', playBtn: 'Play',
+    listenLabel: 'Sound', linkLabel: 'Link A strings', tunerBtn: 'Tuner',
+    viewLabel: 'View', viewLap: 'Lap', viewPlayer: 'Player',
+    subtitle: 'Chord visualizer for the Panamanian mejorana',
+    cancel: 'Cancel', seqSaveBtn: 'Save sequence',
+    hintMain: 'Lap view — looking down at the instrument, headstock on the left. Click a fret or open string to edit.',
+    hintMainManual: 'Lap view — building a custom chord. Click open strings to cycle open → muted → off.',
+    hintPOV: 'Player view — fret 1 on right, D at top — showing selected chord',
+    hintPOVManual: 'Player view — fret 1 on right, D at top — manual mode',
     savedChords: '— Saved chords —', selectChord: '— Select or click frets —',
-    tunerStart: '🎤 Start Mic', tunerStop: '⏹ Stop Mic',
+    tunerStart: 'Start mic', tunerStop: 'Stop mic',
     tunerPrompt: 'Tap the mic button to start', tunerListening: 'Listening…',
     tunerDenied: 'Microphone access denied — check browser permissions',
     tunerUnsupported: 'Microphone not supported in this browser',
     inTune: '✓ In tune', closest: 'Closest:',
-    detectedChord: 'Detected Chord', chordDesc: 'Chord Description',
+    detectedChord: 'Chord', chordDesc: 'Fingering',
     selectOrClick: 'Select a chord or click frets to build one.',
     customVoicing: 'Custom voicing',
     major:'Major', minor:'Minor', dom7:'Dominant 7', maj7:'Major 7', min7:'Minor 7',
-    noteLabels: 'Note Labels', retroMode: 'Retro Mode',
-    seqLabel: 'Chord Sequence', seqAdd: '+ Add to Sequence', seqExport: 'Export Sequence',
-    seqSaved: '— Saved sequences —', seqSave: '+ Save', seqPlaceholder: 'Sequence name…',
-    seqEmpty: 'Select a chord and tap "+ Add" to build a sequence.',
-    torrenteLabel: 'Torrente — Complementary Chords',
-    exportImage: 'Export as Image', exported: 'Image saved!',
+    noteLabels: 'Note names', retroMode: 'Retro mode',
+    seqLabel: 'Chord sequence', seqAdd: 'Add to sequence', seqExport: 'Export sequence',
+    seqSaved: '— Saved sequences —', seqSave: 'Save', seqPlaceholder: 'Sequence name…',
+    seqEmpty: 'Pick a chord, then choose “Add to sequence”.',
+    torrenteLabel: 'Torrente — complementary chords',
+    exportImage: 'Export image', exported: 'Image saved!',
     notes: 'Notes:', incorrectPw: 'Incorrect password',
     micRequesting: 'Requesting microphone…',
     micDismissed: 'Microphone access dismissed — tap the button to try again.',
     micNotFound: 'No microphone found on this device.',
     micError: 'Could not access microphone',
-    voicingOf: 'of',
+    voicingOf: 'of', voicing: 'Voicing',
   },
   es: {
-    chordLabel: 'Acorde:', myChords: 'Mis Acordes:', savePlaceholder: 'Nombre del acorde…',
-    saveBtn: '+ Guardar', deleteBtn: 'Eliminar', clearBtn: 'Borrar', playBtn: '▶ Tocar Acorde',
-    listenLabel: 'Escuchar', linkLabel: 'Unir Cuerdas La', tunerBtn: '🎤 Afinador',
-    povLabel: 'POV', povActive: 'POV ✓',
+    chordLabel: 'Acorde', myChords: 'Mis acordes', savePlaceholder: 'Nombre del acorde…',
+    saveBtn: 'Guardar', deleteBtn: 'Eliminar', clearBtn: 'Borrar', playBtn: 'Tocar',
+    listenLabel: 'Sonido', linkLabel: 'Unir cuerdas La', tunerBtn: 'Afinador',
+    viewLabel: 'Vista', viewLap: 'Regazo', viewPlayer: 'Músico',
+    subtitle: 'Visualizador de acordes para la mejorana panameña',
+    cancel: 'Cancelar', seqSaveBtn: 'Guardar secuencia',
     hintMain: 'Mirando desde arriba — clavijero a la izquierda, traste 1 a la izquierda',
     hintMainManual: 'Mirando desde arriba — modo manual',
-    hintPOV: 'Modo POV — traste 1 a la derecha, Re arriba',
-    hintPOVManual: 'Modo POV — modo manual',
+    hintPOV: 'Vista del músico — traste 1 a la derecha, Re arriba',
+    hintPOVManual: 'Vista del músico — modo manual',
     savedChords: '— Acordes guardados —', selectChord: '— Seleccionar o hacer clic —',
-    tunerStart: '🎤 Activar Micrófono', tunerStop: '⏹ Detener Micrófono',
+    tunerStart: 'Activar micrófono', tunerStop: 'Detener micrófono',
     tunerPrompt: 'Toca el botón del micrófono para empezar', tunerListening: 'Escuchando…',
     tunerDenied: 'Acceso al micrófono denegado — revisa los permisos del navegador',
     tunerUnsupported: 'Micrófono no compatible con este navegador',
     inTune: '✓ Afinado', closest: 'Más cercana:',
-    detectedChord: 'Acorde Detectado', chordDesc: 'Descripción del Acorde',
+    detectedChord: 'Acorde', chordDesc: 'Digitación',
     selectOrClick: 'Selecciona un acorde o haz clic en los trastes.',
     customVoicing: 'Posición personalizada',
     major:'Mayor', minor:'Menor', dom7:'Séptima Dominante', maj7:'Séptima Mayor', min7:'Séptima Menor',
-    noteLabels: 'Notas', retroMode: 'Modo Retro',
-    seqLabel: 'Secuencia de Acordes', seqAdd: '+ Agregar', seqExport: 'Exportar Secuencia',
-    seqSaved: '— Secuencias guardadas —', seqSave: '+ Guardar', seqPlaceholder: 'Nombre de secuencia…',
-    seqEmpty: 'Selecciona un acorde y toca "+ Agregar" para armar una secuencia.',
-    torrenteLabel: 'Torrente — Acordes Complementarios',
-    exportImage: 'Exportar Imagen', exported: '¡Imagen guardada!',
+    noteLabels: 'Nombres de notas', retroMode: 'Modo retro',
+    seqLabel: 'Secuencia de acordes', seqAdd: 'Agregar a secuencia', seqExport: 'Exportar secuencia',
+    seqSaved: '— Secuencias guardadas —', seqSave: 'Guardar', seqPlaceholder: 'Nombre de secuencia…',
+    seqEmpty: 'Elige un acorde y luego “Agregar a secuencia”.',
+    torrenteLabel: 'Torrente — acordes complementarios',
+    exportImage: 'Exportar imagen', exported: '¡Imagen guardada!',
     notes: 'Notas:', incorrectPw: 'Contraseña incorrecta',
     micRequesting: 'Solicitando micrófono…',
     micDismissed: 'Acceso al micrófono cancelado — toca el botón para intentar de nuevo.',
     micNotFound: 'No se encontró micrófono en este dispositivo.',
     micError: 'No se pudo acceder al micrófono',
-    voicingOf: 'de',
+    voicingOf: 'de', voicing: 'Posición',
   }
 };
 
@@ -776,6 +754,10 @@ function setLang(l) {
   currentLang = l;
   document.getElementById('langEN').classList.toggle('active', l === 'en');
   document.getElementById('langES').classList.toggle('active', l === 'es');
+  const sel = document.getElementById('chordSel');
+  const keep = sel.value;
+  buildDropdown();
+  sel.value = keep;
   applyI18n();
 }
 
@@ -784,7 +766,10 @@ function setNotation(n) {
   document.getElementById('notationABC').classList.toggle('active', n === 'abc');
   document.getElementById('notationSOL').classList.toggle('active', n === 'sol');
   // Rebuild chord dropdown with new notation
+  const sel = document.getElementById('chordSel');
+  const keep = sel.value;
   buildDropdown();
+  sel.value = keep;
   render();
 }
 
@@ -812,8 +797,16 @@ function applyI18n() {
   setT('clearBtnText', L.clearBtn);
   setT('detectedChordLabel', L.detectedChord);
   setT('chordDescLabel', L.chordDesc);
-  const playBtn = document.getElementById('playChordBtn');
-  if (playBtn) playBtn.innerHTML = L.playBtn;
+  setT('playChordText', L.playBtn);
+  setT('viewLabel', L.viewLabel);
+  setT('viewLap', L.viewLap);
+  setT('viewPlayer', L.viewPlayer);
+  setT('subtitleText', L.subtitle);
+  ['saveCancelBtn', 'seqCancelBtn'].forEach(id => setT(id, L.cancel));
+  ['saveConfirmBtn', 'seqConfirmBtn'].forEach(id => setT(id, L.seqSave));
+  setT('seqClearBtn', L.clearBtn);
+  setT('seqSaveBtnText', L.seqSaveBtn);
+  document.documentElement.lang = currentLang;
   const saveInput = document.getElementById('saveNameInput');
   if (saveInput) saveInput.placeholder = L.savePlaceholder;
   const saveBtn = document.getElementById('saveBtnText');
@@ -822,8 +815,6 @@ function applyI18n() {
   if (delBtn) delBtn.textContent = L.deleteBtn;
   const clearBtn = document.getElementById('clearBtnEl');
   if (clearBtn) clearBtn.textContent = L.clearBtn;
-  const povBtn = document.getElementById('povBtn');
-  if (povBtn) povBtn.querySelector('.pov-toggle-label').textContent = state.pov ? L.povActive : L.povLabel;
   const promptEl = document.getElementById('promptOut');
   if (promptEl && promptEl.textContent === LANG[currentLang === 'en' ? 'es' : 'en'].selectOrClick) {
     promptEl.textContent = L.selectOrClick;
@@ -846,7 +837,6 @@ function applyI18n() {
   setT('seqSectionLabel', L.seqLabel);
   setT('seqAddBtn', L.seqAdd);
   setT('seqExportBtn', L.seqExport);
-  setT('seqSelLabel', L.seqLabel + ':');
   const seqSel = document.getElementById('seqSel');
   if (seqSel && seqSel.options[0]) seqSel.options[0].text = L.seqSaved;
   const seqThumbs = document.getElementById('seqThumbs');
@@ -1128,7 +1118,7 @@ function buildFretboard() {
   // Nut — slightly thicker ivory-coloured bar
   const nutBg = retro
     ? 'linear-gradient(180deg,#ff00ff,#aa00ff,#ff00ff)'
-    : 'linear-gradient(180deg,#f8f0d8,#e8e0b8,#f8f0d8)';
+    : '#e9e1cf';
   const nutShadow = retro ? 'box-shadow:0 0 8px #ff00ff,0 0 16px #aa00aa;' : '';
   const nut = `<div style="position:absolute;${pov?'right':'left'}:0;top:0;bottom:0;width:6px;
     background:${nutBg};${nutShadow}z-index:4;pointer-events:none;border-radius:1px;"></div>`;
@@ -1140,7 +1130,7 @@ function buildFretboard() {
     const tw = Math.max(1.4, 3.2 - f * 0.2);
     const fretBg = retro
       ? 'linear-gradient(180deg,rgba(0,255,255,.3),rgba(0,255,255,.6),rgba(0,255,255,.3))'
-      : 'linear-gradient(180deg,#c8b88880,#ddd0a8,#c8b88880)';
+      : 'linear-gradient(90deg,#8f8778,#d6cfc1,#8f8778)';
     const fretGlow = retro ? 'box-shadow:0 0 4px #00ffff;' : '';
     fretLines += `<div style="position:absolute;left:${xp - tw/2}px;top:0;bottom:0;width:${tw}px;
       background:${fretBg};${fretGlow}z-index:2;pointer-events:none;"></div>`;
@@ -1153,7 +1143,7 @@ function buildFretboard() {
     const y = (row + 0.5) * CH - THICK[si] / 2;
     const strBg = retro
       ? `${strColors[si]}`
-      : 'linear-gradient(90deg,#a09878,#e0d8b8,#a09878)';
+      : '#d3cab8';
     const strGlow = retro ? `box-shadow:0 0 6px ${strColors[si]},0 0 12px ${strColors[si]}40;` : '';
     strLines += `<div style="position:absolute;left:0;right:0;top:${y}px;height:${retro?2:THICK[si]}px;
       background:${strBg};opacity:${retro?1:.85};${strGlow}z-index:2;pointer-events:none;"></div>`;
@@ -1164,7 +1154,7 @@ function buildFretboard() {
   [3, 5, 7].forEach(f => {
     const cx = (FRET_X[f-1] + FRET_X[f]) / 2;
     const mx = pov ? NECK_W - cx - 9 : cx - 9;
-    const mkBg = retro ? 'rgba(0,255,255,.15)' : 'rgba(255,248,200,.12)';
+    const mkBg = retro ? 'rgba(0,255,255,.15)' : 'rgba(233,225,207,.16)';
     const mkShadow = retro ? 'box-shadow:0 0 6px rgba(0,255,255,.2);' : '';
     markers += `<div style="position:absolute;left:${mx}px;top:${neckH/2-9}px;width:18px;height:18px;
       border-radius:50%;background:${mkBg};${mkShadow}z-index:1;pointer-events:none;"></div>`;
@@ -1178,7 +1168,7 @@ function buildFretboard() {
       const cx = pov ? NECK_W - FRET_X[f] : FRET_X[f-1];
       cells += `<div id="fc_${si}_${f}" onclick="onFretClick(${si},${f})"
         style="position:absolute;left:${cx}px;top:${row*CH}px;width:${fw}px;height:${CH}px;z-index:5;cursor:pointer;"
-        onmouseover="this.style.background='rgba(255,255,255,.07)'"
+        onmouseover="this.style.background='rgba(255,255,255,.05)'"
         onmouseout="this.style.background='transparent'"></div>`;
     }
   });
@@ -1295,7 +1285,7 @@ function render() {
 
     if (pos === -1) {
       const oc = document.getElementById(`oc_${s}`);
-      const xColor = state.retro ? '#ff0044' : '#cc4444';
+      const xColor = state.retro ? '#ff0044' : '#d0705a';
       const xGlow = state.retro ? 'text-shadow:0 0 8px #ff0044;' : '';
       if (oc) oc.innerHTML = `<span style="color:${xColor};font-size:17px;font-weight:900;line-height:1;${xGlow}">✕</span>`;
       continue;
@@ -1310,16 +1300,16 @@ function render() {
       const oc = document.getElementById(`oc_${s}`);
       const openBorder = retro
         ? (isRoot ? '#ff00ff' : '#00ffff')
-        : (isRoot ? '#f0e060' : '#d0c8a0');
+        : (isRoot ? '#d9a441' : '#ece4d6');
       const openBg = retro
         ? (isRoot ? 'rgba(255,0,255,.2)' : 'transparent')
-        : (isRoot ? 'rgba(240,224,96,.18)' : 'transparent');
+        : (isRoot ? 'rgba(217,164,65,.18)' : 'transparent');
       const openShadow = retro
         ? `box-shadow:0 0 8px ${isRoot?'#ff00ff':'#00ffff'},0 0 16px ${isRoot?'#ff00ff40':'#00ffff40'};`
-        : 'box-shadow:0 1px 4px rgba(0,0,0,.5);';
+        : '';
       const noteLblColor = retro
         ? (isRoot ? '#ff00ff' : '#00ffff')
-        : (isRoot ? '#c8a000' : '#706040');
+        : (isRoot ? '#d9a441' : '#a0957f');
       const noteLabel = state.showNoteLabels
         ? `<span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
             font-size:9px;font-weight:800;color:${noteLblColor};${retro?'text-shadow:0 0 4px '+noteLblColor+';':''}
@@ -1338,15 +1328,13 @@ function render() {
           box-shadow:0 0 10px ${nc},0 0 20px ${nc},0 0 40px ${nc}40;`;
       } else {
         dot.style.cssText += isRoot
-          ? `background:radial-gradient(circle at 35% 30%,#fff8a0,#e8c000,#b09000);
-             border:2px solid #7a6000;box-shadow:0 2px 8px rgba(0,0,0,.6),0 0 10px rgba(200,160,0,.4);`
-          : `background:radial-gradient(circle at 35% 30%,#f0e8a0,#c8a040,#9a7820);
-             border:2px solid #6a5010;box-shadow:0 2px 5px rgba(0,0,0,.5);`;
+          ? `background:#d9a441;border:none;box-shadow:0 1px 3px rgba(0,0,0,.5),0 0 0 3px rgba(217,164,65,.22);`
+          : `background:#ece4d6;border:none;box-shadow:0 1px 3px rgba(0,0,0,.5);`;
       }
       if (state.showNoteLabels) {
         const lbl = document.createElement('span');
         lbl.textContent = noteName(p);
-        const lblColor = retro ? '#0a0018' : 'rgba(0,0,0,.7)';
+        const lblColor = retro ? '#0a0018' : '#1c1407';
         lbl.style.cssText = `font-size:9px;font-weight:800;color:${lblColor};pointer-events:none;line-height:1;`;
         dot.appendChild(lbl);
       }
@@ -1368,7 +1356,7 @@ function render() {
 
     if (aPos === -1) {
       // Muted course
-      const xc = retro ? '#ff0044' : '#cc4444';
+      const xc = retro ? '#ff0044' : '#d0705a';
       const xg = retro ? 'text-shadow:0 0 8px #ff0044;' : '';
       const ocTop = document.getElementById(`oc_${vOrder[topRow]}`);
       if (ocTop) ocTop.innerHTML = `<span style="color:${xc};font-size:17px;font-weight:900;line-height:1;${xg}">✕</span>`;
@@ -1381,9 +1369,9 @@ function render() {
         openColEl.style.position = 'relative';
         const ov = document.createElement('div');
         ov.id = 'a-course-oval';
-        const oBorder = retro ? (isRoot?'#ff00ff':'#00ffff') : (isRoot?'#f0e060':'#d0c8a0');
-        const oBg = retro ? (isRoot?'rgba(255,0,255,.2)':'transparent') : (isRoot?'rgba(240,224,96,.18)':'transparent');
-        const oShadow = retro ? `0 0 8px ${oBorder},0 0 16px ${oBorder}40` : '0 1px 4px rgba(0,0,0,.5)';
+        const oBorder = retro ? (isRoot?'#ff00ff':'#00ffff') : (isRoot?'#d9a441':'#ece4d6');
+        const oBg = retro ? (isRoot?'rgba(255,0,255,.2)':'transparent') : (isRoot?'rgba(217,164,65,.18)':'transparent');
+        const oShadow = retro ? `0 0 8px ${oBorder},0 0 16px ${oBorder}40` : 'none';
         ov.style.cssText = `position:absolute;left:50%;transform:translateX(-50%);
           top:${yTop}px;width:22px;height:${ovalH}px;border-radius:11px;
           border:2px solid ${oBorder};background:${oBg};
@@ -1403,15 +1391,13 @@ function render() {
           box-shadow:0 0 10px ${nc},0 0 20px ${nc},0 0 40px ${nc}40;`;
       } else {
         ov.style.cssText += isRoot
-          ? `background:radial-gradient(circle at 35% 30%,#fff8a0,#e8c000,#b09000);
-             border:2px solid #7a6000;box-shadow:0 2px 8px rgba(0,0,0,.6),0 0 10px rgba(200,160,0,.4);`
-          : `background:radial-gradient(circle at 35% 30%,#f0e8a0,#c8a040,#9a7820);
-             border:2px solid #6a5010;box-shadow:0 2px 5px rgba(0,0,0,.5);`;
+          ? `background:#d9a441;border:none;box-shadow:0 1px 3px rgba(0,0,0,.5),0 0 0 3px rgba(217,164,65,.22);`
+          : `background:#ece4d6;border:none;box-shadow:0 1px 3px rgba(0,0,0,.5);`;
       }
       if (state.showNoteLabels) {
         const lbl = document.createElement('span');
         lbl.textContent = noteName(fretPc(2, aPos));
-        lbl.style.cssText = `font-size:9px;font-weight:800;color:rgba(0,0,0,.7);pointer-events:none;line-height:1;`;
+        lbl.style.cssText = `font-size:9px;font-weight:800;color:#1c1407;pointer-events:none;line-height:1;`;
         ov.appendChild(lbl);
       }
       dotsEl.appendChild(ov);
@@ -1758,8 +1744,7 @@ function toggleTuner() {
   const panel = document.getElementById('tunerPanel');
   const btn   = document.getElementById('tunerBtn');
   const isOpen = panel.classList.toggle('visible');
-  btn.style.background  = isOpen ? '#3a2808' : '';
-  btn.style.borderColor = isOpen ? '#c8a060' : '';
+  btn.classList.toggle('active', isOpen);
   if (!isOpen) stopTunerMic();
 }
 
@@ -1870,7 +1855,7 @@ function seqClear() {
 function renderSequence() {
   const container = document.getElementById('seqThumbs');
   container.innerHTML = '';
-  const exportBtn = document.getElementById('seqExportBtn');
+  const exportBtn = document.getElementById('seqExportBtnWrap');
   if (exportBtn) exportBtn.style.display = currentSequence.length > 0 ? '' : 'none';
   const TW = 80, TH = 60;
   currentSequence.forEach((chord, i) => {
@@ -2082,7 +2067,7 @@ function updateVoicingNav() {
   }
   nav.style.display = '';
   document.getElementById('voicingLabel').textContent =
-    'Voicing ' + (state.voicingIndex + 1) + ' ' + T('voicingOf') + ' ' + voicings.length;
+    T('voicing') + ' ' + (state.voicingIndex + 1) + ' ' + T('voicingOf') + ' ' + voicings.length;
 
   const thumbs = document.getElementById('voicingThumbs');
   thumbs.innerHTML = '';
@@ -2109,19 +2094,19 @@ function drawThumb(canvas, positions) {
   const strGap = neckH / (NS - 1);
 
   // Background
-  ctx.fillStyle = isRetro ? '#0a0015' : '#1a1206';
+  ctx.fillStyle = isRetro ? '#0a0015' : '#221e19';
   ctx.fillRect(0, 0, W, H);
 
   // Neck
-  ctx.fillStyle = isRetro ? '#110022' : '#2a1e0e';
+  ctx.fillStyle = isRetro ? '#110022' : '#3b2418';
   ctx.fillRect(pad.left, pad.top, neckW, neckH);
 
   // Nut
-  ctx.fillStyle = isRetro ? '#ff00ff' : '#d4c49a';
+  ctx.fillStyle = isRetro ? '#ff00ff' : '#e9e1cf';
   ctx.fillRect(pad.left - 3, pad.top, 3, neckH);
 
   // Frets
-  ctx.strokeStyle = isRetro ? '#00ffff33' : '#5a4a2a';
+  ctx.strokeStyle = isRetro ? '#00ffff33' : '#7d7466';
   ctx.lineWidth = 1;
   for (let f = 1; f <= NF; f++) {
     const x = pad.left + f * fretW;
@@ -2134,7 +2119,7 @@ function drawThumb(canvas, positions) {
     const y = pad.top + s * strGap;
     ctx.strokeStyle = isRetro ?
       ['#ff69b4','#ff8c00','#00ff41','#00ffff','#bf5fff'][s] :
-      '#8a7a5a';
+      '#b5ac9b';
     ctx.beginPath(); ctx.moveTo(pad.left, y); ctx.lineTo(pad.left + neckW, y); ctx.stroke();
   }
 
@@ -2144,12 +2129,12 @@ function drawThumb(canvas, positions) {
     const y = pad.top + s * strGap;
     if (p === null || p === 0) {
       // Open circle
-      ctx.strokeStyle = isRetro ? '#00ffff' : '#a8d060';
+      ctx.strokeStyle = isRetro ? '#00ffff' : '#a0957f';
       ctx.lineWidth = 1.5;
       ctx.beginPath(); ctx.arc(pad.left - 10, y, r * 0.6, 0, Math.PI * 2); ctx.stroke();
     } else if (p === -1) {
       // Muted X
-      ctx.strokeStyle = isRetro ? '#ff004488' : '#5a4a3a';
+      ctx.strokeStyle = isRetro ? '#ff004488' : '#6f6656';
       ctx.lineWidth = 1.5;
       const cx = pad.left - 10;
       const sz = r * 0.5;
@@ -2158,7 +2143,7 @@ function drawThumb(canvas, positions) {
     } else {
       // Fretted dot
       const x = pad.left + (p - 0.5) * fretW;
-      ctx.fillStyle = isRetro ? '#ff00ff' : '#f0e060';
+      ctx.fillStyle = isRetro ? '#ff00ff' : '#d9a441';
       ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
     }
   });
@@ -2166,14 +2151,19 @@ function drawThumb(canvas, positions) {
 
 // Backwards compat alias
 
-function togglePOV() {
-  state.pov = !state.pov;
-  const btn = document.getElementById('povBtn');
-  btn.classList.toggle('active', state.pov);
-  btn.querySelector('.pov-toggle-label').textContent = state.pov ? 'POV ✓' : 'POV';
+function togglePOV() { setPOV(!state.pov); }
+
+function setPOV(on) {
+  if (state.pov === on) return;
+  state.pov = on;
+  document.getElementById('viewLap').classList.toggle('active', !on);
+  document.getElementById('viewPlayer').classList.toggle('active', on);
   buildFretboard();
   render();
   updateHint();
+  // In player view fret 1 sits on the right, so start narrow screens scrolled there
+  const scroller = document.querySelector('.fretboard-scroll');
+  scroller.scrollLeft = on ? scroller.scrollWidth : 0;
 }
 
 function clearAll() {
@@ -2224,7 +2214,7 @@ function exportChordImage() {
   ctx.scale(scale, scale);
 
   // Background
-  ctx.fillStyle = retro ? '#0a0018' : '#1a1510';
+  ctx.fillStyle = retro ? '#0a0018' : '#12100d';
   ctx.fillRect(0, 0, totalW, totalH);
 
   // Grid overlay for retro
@@ -2244,9 +2234,9 @@ function exportChordImage() {
     ctx.fillStyle = '#ff00ff';
     ctx.shadowColor = '#ff00ff'; ctx.shadowBlur = 12;
   } else {
-    ctx.font = 'bold 26px -apple-system, BlinkMacSystemFont, sans-serif';
-    ctx.fillStyle = '#f0e060';
-    ctx.shadowColor = 'rgba(240,224,96,.25)'; ctx.shadowBlur = 16;
+    ctx.font = 'bold 26px Inter, -apple-system, BlinkMacSystemFont, sans-serif';
+    ctx.fillStyle = '#d9a441';
+    ctx.shadowColor = 'rgba(0,0,0,0)'; ctx.shadowBlur = 16;
   }
   ctx.fillText(chordName, totalW / 2, 32);
   ctx.shadowBlur = 0;
@@ -2254,8 +2244,8 @@ function exportChordImage() {
     ctx.font = '8px "Press Start 2P", monospace';
     ctx.fillStyle = '#00ffff';
   } else {
-    ctx.font = '11px -apple-system, sans-serif';
-    ctx.fillStyle = '#7a6a50';
+    ctx.font = '11px Inter, -apple-system, sans-serif';
+    ctx.fillStyle = '#a0957f';
   }
   ctx.fillText(chordNotes, totalW / 2, 50);
 
@@ -2268,8 +2258,8 @@ function exportChordImage() {
     ctx.fillStyle = '#080020';
     ctx.strokeStyle = '#4400aa';
   } else {
-    ctx.fillStyle = '#7a4020';
-    ctx.strokeStyle = '#3a1a08';
+    ctx.fillStyle = '#4a2d1d';
+    ctx.strokeStyle = '#23150d';
   }
   ctx.fillRect(ox, oy, neckW, neckH);
   ctx.lineWidth = 2;
@@ -2281,7 +2271,7 @@ function exportChordImage() {
     ctx.fillStyle = '#ff00ff';
     ctx.shadowColor = '#ff00ff'; ctx.shadowBlur = 6;
   } else {
-    ctx.fillStyle = '#f0e8d0';
+    ctx.fillStyle = '#e9e1cf';
     ctx.shadowBlur = 0;
   }
   ctx.fillRect(nutX, oy, 6, neckH);
@@ -2354,7 +2344,7 @@ function exportChordImage() {
       const xPos = pov ? ox + neckW + openW/2 : openW/2;
       ctx.font = 'bold 17px sans-serif';
       ctx.textAlign = 'center';
-      ctx.fillStyle = retro ? '#ff0044' : '#cc4444';
+      ctx.fillStyle = retro ? '#ff0044' : '#d0705a';
       ctx.fillText('✕', xPos, cy + 6);
       continue;
     }
@@ -2369,10 +2359,10 @@ function exportChordImage() {
         ctx.strokeStyle = isRoot ? '#ff00ff' : '#00ffff';
         ctx.shadowColor = ctx.strokeStyle; ctx.shadowBlur = 6;
       } else {
-        ctx.strokeStyle = isRoot ? '#f0e060' : '#d0c8a0';
+        ctx.strokeStyle = isRoot ? '#d9a441' : '#ece4d6';
         ctx.shadowBlur = 0;
       }
-      ctx.fillStyle = retro ? (isRoot?'rgba(255,0,255,.15)':'transparent') : (isRoot?'rgba(240,224,96,.15)':'transparent');
+      ctx.fillStyle = retro ? (isRoot?'rgba(255,0,255,.15)':'transparent') : (isRoot?'rgba(217,164,65,.15)':'transparent');
       ctx.fill();
       ctx.stroke();
       ctx.shadowBlur = 0;
@@ -2387,13 +2377,13 @@ function exportChordImage() {
         ctx.fillStyle = nc;
         ctx.shadowColor = nc; ctx.shadowBlur = 14;
       } else {
-        ctx.fillStyle = isRoot ? '#d8b020' : '#b89830';
+        ctx.fillStyle = isRoot ? '#d9a441' : '#ece4d6';
         ctx.shadowBlur = 0;
       }
       ctx.fill();
       ctx.shadowBlur = 0;
       ctx.lineWidth = 2;
-      ctx.strokeStyle = retro ? 'transparent' : (isRoot ? '#7a6000' : '#6a5010');
+      ctx.strokeStyle = retro ? 'transparent' : (isRoot ? 'rgba(0,0,0,.25)' : 'rgba(0,0,0,.25)');
       ctx.stroke();
     }
   }
@@ -2409,7 +2399,7 @@ function exportChordImage() {
     if (aPos === -1) {
       const xPos = pov ? ox + neckW + openW/2 : openW/2;
       ctx.font = 'bold 17px sans-serif'; ctx.textAlign = 'center';
-      ctx.fillStyle = retro ? '#ff0044' : '#cc4444';
+      ctx.fillStyle = retro ? '#ff0044' : '#d0705a';
       ctx.fillText('✕', xPos, oy + (topRow+0.5)*CH + 6);
       ctx.fillText('✕', xPos, oy + (topRow+1.5)*CH + 6);
     } else if (aPos === 0) {
@@ -2420,7 +2410,7 @@ function exportChordImage() {
       ctx.ellipse(oPos, ovalTop + ovalRy, ovalRx, ovalRy, 0, 0, Math.PI*2);
       ctx.lineWidth = 2;
       if (retro) { ctx.strokeStyle = isRoot?'#ff00ff':'#00ffff'; ctx.shadowColor=ctx.strokeStyle; ctx.shadowBlur=6; }
-      else { ctx.strokeStyle = isRoot?'#f0e060':'#d0c8a0'; }
+      else { ctx.strokeStyle = isRoot?'#d9a441':'#ece4d6'; }
       ctx.fillStyle = 'transparent'; ctx.stroke();
       ctx.shadowBlur = 0;
     } else {
@@ -2434,7 +2424,7 @@ function exportChordImage() {
         const nc = isRoot?'#ff00ff':'#00ffff';
         ctx.fillStyle = nc; ctx.shadowColor=nc; ctx.shadowBlur=14;
       } else {
-        ctx.fillStyle = isRoot?'#d8b020':'#b89830';
+        ctx.fillStyle = isRoot?'#d9a441':'#ece4d6';
       }
       ctx.fill(); ctx.shadowBlur=0;
     }
@@ -2443,7 +2433,7 @@ function exportChordImage() {
   // Fret numbers
   ctx.textAlign = 'center';
   if (retro) { ctx.font = '7px "Press Start 2P", monospace'; ctx.fillStyle = '#6644aa'; }
-  else { ctx.font = '10px -apple-system, sans-serif'; ctx.fillStyle = '#4a3a22'; }
+  else { ctx.font = '10px Inter, -apple-system, sans-serif'; ctx.fillStyle = '#6f6656'; }
   for (let f = 1; f <= NF; f++) {
     const fcx = (FRET_X[f-1] + FRET_X[f]) / 2;
     const fx = ox + (pov ? neckW - fcx : fcx);
@@ -2453,7 +2443,7 @@ function exportChordImage() {
   // String labels
   ctx.textAlign = pov ? 'right' : 'left';
   if (retro) { ctx.font = '7px "Press Start 2P", monospace'; ctx.fillStyle = '#00ffff'; }
-  else { ctx.font = '12px -apple-system, sans-serif'; ctx.fillStyle = '#b09070'; }
+  else { ctx.font = '12px Inter, -apple-system, sans-serif'; ctx.fillStyle = '#ece4d6'; }
   vOrder.forEach((si, row) => {
     const ly = oy + (row + 0.5) * CH + 4;
     const lx = pov ? labelW - 8 : ox + neckW + 12;
@@ -2463,7 +2453,7 @@ function exportChordImage() {
   // Footer — watermark
   ctx.textAlign = 'center';
   if (retro) { ctx.font = '6px "Press Start 2P", monospace'; ctx.fillStyle = '#4422aa'; }
-  else { ctx.font = '9px -apple-system, sans-serif'; ctx.fillStyle = '#4a3a22'; }
+  else { ctx.font = '9px Inter, -apple-system, sans-serif'; ctx.fillStyle = '#6f6656'; }
   ctx.fillText('Mejorana Chord Visualizer', totalW / 2, totalH - 12);
 
   // Export as JPEG
@@ -2509,7 +2499,7 @@ function exportSequenceImage() {
   ctx.scale(scale, scale);
 
   // Background
-  ctx.fillStyle = retro ? '#0a0018' : '#1a1510';
+  ctx.fillStyle = retro ? '#0a0018' : '#12100d';
   ctx.fillRect(0, 0, totalW, totalH);
 
   if (retro) {
@@ -2526,9 +2516,9 @@ function exportSequenceImage() {
     ctx.fillStyle = '#ff00ff';
     ctx.shadowColor = '#ff00ff'; ctx.shadowBlur = 10;
   } else {
-    ctx.font = 'bold 20px -apple-system, BlinkMacSystemFont, sans-serif';
-    ctx.fillStyle = '#f0e060';
-    ctx.shadowColor = 'rgba(240,224,96,.25)'; ctx.shadowBlur = 12;
+    ctx.font = 'bold 20px Inter, -apple-system, BlinkMacSystemFont, sans-serif';
+    ctx.fillStyle = '#d9a441';
+    ctx.shadowColor = 'rgba(0,0,0,0)'; ctx.shadowBlur = 12;
   }
   // Use saved sequence name if loaded, otherwise generic
   const seqSel = document.getElementById('seqSel');
@@ -2550,13 +2540,13 @@ function exportSequenceImage() {
 
     // Number
     ctx.textAlign = 'center';
-    ctx.font = retro ? '7px "Press Start 2P", monospace' : '10px -apple-system, sans-serif';
+    ctx.font = retro ? '7px "Press Start 2P", monospace' : '10px Inter, -apple-system, sans-serif';
     ctx.fillStyle = retro ? '#8866bb' : '#5a4a30';
     ctx.fillText((i + 1), bx + chordW / 2, by + numH - 3);
 
     // Thumb background
     const tx = bx, ty = by + numH;
-    ctx.fillStyle = retro ? '#0a0015' : '#1a1206';
+    ctx.fillStyle = retro ? '#0a0015' : '#221e19';
     ctx.fillRect(tx, ty, chordW, chordH);
     ctx.strokeStyle = retro ? '#4400aa' : '#3a2a10';
     ctx.lineWidth = 1;
@@ -2564,15 +2554,15 @@ function exportSequenceImage() {
 
     // Neck
     const nx = tx + pad.left, ny = ty + pad.top;
-    ctx.fillStyle = retro ? '#110022' : '#2a1e0e';
+    ctx.fillStyle = retro ? '#110022' : '#3b2418';
     ctx.fillRect(nx, ny, thumbNeckW, thumbNeckH);
 
     // Nut
-    ctx.fillStyle = retro ? '#ff00ff' : '#d4c49a';
+    ctx.fillStyle = retro ? '#ff00ff' : '#e9e1cf';
     ctx.fillRect(nx - 3, ny, 3, thumbNeckH);
 
     // Frets
-    ctx.strokeStyle = retro ? '#00ffff33' : '#5a4a2a';
+    ctx.strokeStyle = retro ? '#00ffff33' : '#7d7466';
     ctx.lineWidth = 1;
     for (let f = 1; f <= NF; f++) {
       const fx = nx + f * fretW;
@@ -2583,7 +2573,7 @@ function exportSequenceImage() {
     const strColors = ['#ff69b4','#ff8c00','#00ff41','#00ffff','#bf5fff'];
     for (let s = 0; s < NS; s++) {
       const sy = ny + s * strGap;
-      ctx.strokeStyle = retro ? strColors[s] : '#8a7a5a';
+      ctx.strokeStyle = retro ? strColors[s] : '#b5ac9b';
       ctx.lineWidth = 1;
       ctx.beginPath(); ctx.moveTo(nx, sy); ctx.lineTo(nx + thumbNeckW, sy); ctx.stroke();
     }
@@ -2593,33 +2583,33 @@ function exportSequenceImage() {
     chord.positions.forEach((p, s) => {
       const sy = ny + s * strGap;
       if (p === null || p === 0) {
-        ctx.strokeStyle = retro ? '#00ffff' : '#a8d060';
+        ctx.strokeStyle = retro ? '#00ffff' : '#a0957f';
         ctx.lineWidth = 1.5;
         ctx.beginPath(); ctx.arc(nx - 10, sy, dotR * 0.6, 0, Math.PI * 2); ctx.stroke();
       } else if (p === -1) {
-        ctx.strokeStyle = retro ? '#ff004488' : '#5a4a3a';
+        ctx.strokeStyle = retro ? '#ff004488' : '#6f6656';
         ctx.lineWidth = 1.5;
         const cx = nx - 10, sz = dotR * 0.5;
         ctx.beginPath(); ctx.moveTo(cx - sz, sy - sz); ctx.lineTo(cx + sz, sy + sz); ctx.stroke();
         ctx.beginPath(); ctx.moveTo(cx + sz, sy - sz); ctx.lineTo(cx - sz, sy + sz); ctx.stroke();
       } else {
         const dx = nx + (p - 0.5) * fretW;
-        ctx.fillStyle = retro ? '#ff00ff' : '#f0e060';
+        ctx.fillStyle = retro ? '#ff00ff' : '#d9a441';
         ctx.beginPath(); ctx.arc(dx, sy, dotR, 0, Math.PI * 2); ctx.fill();
       }
     });
 
     // Chord name
     ctx.textAlign = 'center';
-    ctx.font = retro ? '8px "Press Start 2P", monospace' : 'bold 12px -apple-system, sans-serif';
-    ctx.fillStyle = retro ? '#00ffff' : '#b09070';
+    ctx.font = retro ? '8px "Press Start 2P", monospace' : 'bold 12px Inter, -apple-system, sans-serif';
+    ctx.fillStyle = retro ? '#00ffff' : '#ece4d6';
     ctx.fillText(chord.name, bx + chordW / 2, ty + chordH + labelH - 6);
   });
 
   // Footer
   ctx.textAlign = 'center';
-  ctx.font = retro ? '6px "Press Start 2P", monospace' : '9px -apple-system, sans-serif';
-  ctx.fillStyle = retro ? '#4422aa' : '#4a3a22';
+  ctx.font = retro ? '6px "Press Start 2P", monospace' : '9px Inter, -apple-system, sans-serif';
+  ctx.fillStyle = retro ? '#4422aa' : '#6f6656';
   ctx.fillText('Mejorana Chord Visualizer', totalW / 2, totalH - 10);
 
   c.toBlob(blob => {
@@ -2737,7 +2727,7 @@ function updateTunerUI(freq) {
   const inTune = Math.abs(cents) <= 5;
   needleEl.classList.toggle('in-tune', inTune);
   centsEl.textContent = inTune ? T('inTune') : (cents > 0 ? `+${cents}` : `${cents}`) + ' cents';
-  centsEl.style.color = inTune ? '#60f070' : '#c0a070';
+  centsEl.style.color = inTune ? '#7fbf7a' : '';
   hintEl.textContent = string ? `${T('closest')} ${string.label}  (${strCents > 0 ? '+' : ''}${strCents} cents)` : '';
 }
 
